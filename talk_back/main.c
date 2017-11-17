@@ -6,6 +6,9 @@
 #include<util/delay.h>
 #include<stdlib.h>
 
+unsigned char FLAG = 0;
+#define WAITING_INPUT 0x1
+
 void init(void) {
     // setup pin direction
     DDRC = 0xFF;
@@ -21,9 +24,6 @@ void init(void) {
 
     sei();
 }
-
-unsigned char FLAG = 0;
-#define WAITING_INPUT 0x1
 
 // wake up on rx
 //https://arduino.stackexchange.com/questions/13167/put-atmega328-in-very-deep-sleep-and-listen-to-serial
@@ -59,7 +59,6 @@ int main(void) {
         }
         break;
     }
-
 
 
     /*

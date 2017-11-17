@@ -7,9 +7,9 @@ os.environ["LDSHARED"] = "gcc"
 
 setup(
     ext_modules = [Extension("py_usart",
-                             ["stubs/pgmspace.c", "stubs/io.c", "../usart.c",
+                             ["lib/pgmspace.c", "lib/io.c", "../usart.c",
                                  "py_usart.pyx"],
-                             include_dirs=["../", "stubs"],
+                             include_dirs=["../", "lib"],
                              extra_link_args=["-shared"])]
 )
 

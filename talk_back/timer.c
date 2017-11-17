@@ -43,5 +43,6 @@ void init_timer_1(unsigned int rate) {
 }
 
 void init_timer(unsigned int rate) {
+    init_timer_1(rate);
 }
 

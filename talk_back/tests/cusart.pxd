@@ -13,7 +13,7 @@ cdef extern from "../usart.h":
     buffer_t _buffer_debug(char buf, char debug)
 
 
-cdef extern from "stubs/io.h":
+cdef extern from "lib/io.h":
     unsigned char UBRR0H
     unsigned char UBRR0L
     unsigned char RXCIE0
