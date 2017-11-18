@@ -3,8 +3,10 @@
 #define TIMER_H_
 
 #include <avr/interrupt.h>
-#include "defs.h"
 #include<avr/wdt.h>
+#include<avr/io.h>
+
+#include "defs.h"
 
 void init_timer(unsigned int rate);
 

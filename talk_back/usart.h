@@ -4,6 +4,7 @@
 
 #include <avr/pgmspace.h>
 #include <avr/interrupt.h>
+#include <avr/io.h>
 #include "defs.h"
 
 #define F_CPU 14745600

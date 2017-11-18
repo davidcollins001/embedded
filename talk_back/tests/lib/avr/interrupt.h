@@ -5,5 +5,7 @@
 #define _BV(name) name
 #define ISR(name) void isr_##name()
 
+#define sei()
+
 #endif //AVR_INTERRUPT_
 
