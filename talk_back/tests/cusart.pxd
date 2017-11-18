@@ -1,7 +1,7 @@
 
 cdef extern from "../usart.h":
     void usart_puts(const char *data)
-    void usart_gets(char *data)
+    int usart_gets(char *data)
 
     void isr_USART_UDRE_vect()
     void isr_USART_RX_vect()

@@ -109,7 +109,6 @@ static void usart_puts_T(const char *data, mem_type_t type) {
         usart_putc(c);
 
 #endif // SERIAL_USART
-
 }
 
 // read string from flash
@@ -124,9 +123,11 @@ void usart_puts(const char *data) {
 
 #include<stdio.h>
 // copy string from buffer to user buffer
-void usart_gets(char *data) {
+int usart_gets(char *data) {
+    int count = 0;
     while(buffer_read(&rx_buffer, data++) != BUFFER_EMPTY)
-        ;
+        count++;
+    return count;
 }
 
 // blocking write to usart

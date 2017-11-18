@@ -1,7 +1,7 @@
 
 import unittest
 from enum import Enum
-from py_usart import (
+from py_talk_back import (
         usart_puts, usart_gets, isr_USART_UDRE_vect, isr_USART_RX_vect,
         buffer_debug
 )
@@ -39,6 +39,11 @@ class TestUsart(unittest.TestCase):
 
             ## read data from buffer
             result = receiver()
+            ## check len returned by c func
+            try:
+                data_len, result = result
+            except ValueError:
+                pass
             self.assertEqual(result[:data_len], data)
 
             ## check data in ring buffer

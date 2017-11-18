@@ -8,9 +8,9 @@ def usart_puts(char *data):
 
 def usart_gets():
     cdef char c_str[64]
-    cusart.usart_gets(c_str)
+    cdef int len = cusart.usart_gets(c_str)
     cdef bytes py_str = c_str;
-    return py_str
+    return len, py_str
 
 
 def isr_USART_UDRE_vect():
@@ -32,7 +32,7 @@ def isr_USART_UDRE_vect():
 def isr_USART_RX_vect(data):
     cdef char c
     ## convert python to c string
-    cdef char* c_data = data
+    cdef char *c_data = data
 
     ## ensure in state to write
     cusart.UCSR0A = 1

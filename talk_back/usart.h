@@ -31,7 +31,7 @@ unsigned char usart_getc(void);
 void usart_puts_P(const char *data);
 void usart_puts(const char *data);
 
-void usart_gets(char *data);
+int usart_gets(char *data);
 
 unsigned char uart_tx_complete(void);
 

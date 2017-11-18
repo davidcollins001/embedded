@@ -22,7 +22,7 @@ void init_wdt(unsigned int rate) {
     // // setup timer interrupt with 1024 prescale
     // WDTCSR |= _BV(WDP3) | _BV(WDP0)
 
-    wdt_enable(1);
+    // wdt_enable(1);
 }
 
 void init_timer_1(unsigned int rate) {

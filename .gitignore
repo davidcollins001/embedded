@@ -1,0 +1,6 @@
+*~
+*.sw[a-z]
+*.so
+tests/py*.c
+*.core
+build
