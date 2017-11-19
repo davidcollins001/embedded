@@ -1,18 +1,24 @@
 
 #include "interrupt.h"
 
-#define WAITING_INPUT 0x1
-
-void init_pcint2(void) {
+void init_interrupt(void) {
     // trigger interrupt on any logical change (rising or falling edge)
     PCICR |= _BV(PCIE2);
     PCICR |= _BV(PCIF2);
     PCMSK2 |= _BV(PCINT16);
 }
 
+void toggle_interrupt(toggle_t choice) {
+    _toggle(&PCICR, _BV(PCIE2), choice);
+}
+
 ISR(PCINT2_vect) {
-    // used to wake up mcu
-    // determine which pin interrupt was on if more than one
-    // PORTC ^= 1;
+    // switch off PCINT to use the pins for usart
+    toggle_interrupt(OFF);
+    // switch on usart
+    toggle_tranceiver(ON);
+
+    FLAG |= _BV(WAITING_INPUT);
+    PORTC ^= 32;
 }
 

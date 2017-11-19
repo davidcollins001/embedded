@@ -3,6 +3,7 @@
 
 #include "usart.h"
 
+
 static inline void enable_receiving(void);
 
 void init_usart(void) {
@@ -123,8 +124,8 @@ void usart_puts(const char *data) {
 
 #include<stdio.h>
 // copy string from buffer to user buffer
-int usart_gets(char *data) {
-    int count = 0;
+unsigned char usart_gets(char *data) {
+    unsigned char count = 0;
     while(buffer_read(&rx_buffer, data++) != BUFFER_EMPTY)
         count++;
     return count;

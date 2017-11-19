@@ -1,6 +1,10 @@
 *~
 *.sw[a-z]
+*.elf
+*.hex
+*.o
 *.so
+*.pyc
 tests/py*.c
 *.core
 build

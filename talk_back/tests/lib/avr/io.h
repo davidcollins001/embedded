@@ -20,8 +20,6 @@ extern unsigned char PCIF2;
 extern unsigned char PCINT16;
 extern unsigned char PCMSK2;
 
-extern unsigned char SLEEP_MODE_PWR_DOWN;
-
 extern unsigned char PORTC;
 
 extern unsigned char UBRR0H;
@@ -41,6 +39,13 @@ extern unsigned char WGM12;
 extern unsigned char OCR1A;
 extern unsigned char TIMSK1;
 extern unsigned char OCIE1B;
+
+extern unsigned char MCUSR;
+extern unsigned char WDTCSR;
+extern unsigned char WDIE;
+extern unsigned char WDE;
+extern unsigned char WDP3;
+extern unsigned char WDP0;
 
 #endif //IO_
 

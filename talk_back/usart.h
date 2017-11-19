@@ -5,6 +5,7 @@
 #include <avr/pgmspace.h>
 #include <avr/interrupt.h>
 #include <avr/io.h>
+
 #include "defs.h"
 
 #define F_CPU 14745600
@@ -31,7 +32,7 @@ unsigned char usart_getc(void);
 void usart_puts_P(const char *data);
 void usart_puts(const char *data);
 
-int usart_gets(char *data);
+unsigned char usart_gets(char *data);
 
 unsigned char uart_tx_complete(void);
 

@@ -18,8 +18,6 @@ unsigned char PCIF2 = 0;
 unsigned char PCINT16 = 0;
 unsigned char PCMSK2 = 0;
 
-unsigned char SLEEP_MODE_PWR_DOWN = 0;
-
 unsigned char DDRC = 0;
 unsigned char PORTC = 0;
 
@@ -40,4 +38,11 @@ unsigned char WGM12 = 0;
 unsigned char OCR1A = 0;
 unsigned char TIMSK1 = 0;
 unsigned char OCIE1B = 0;
+
+unsigned char MCUSR = 0;
+unsigned char WDTCSR = 0;
+unsigned char WDIE = 0;
+unsigned char WDE = 0;
+unsigned char WDP3 = 0;
+unsigned char WDP0 = 0;
 

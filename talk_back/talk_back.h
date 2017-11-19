@@ -2,10 +2,31 @@
 #ifndef TALK_BACK_H_
 #define TALK_BACK_H_
 
+#include <stdio.h>
+#include<stdlib.h>
+#include<string.h>
+
+#include <avr/pgmspace.h>
+#include <avr/io.h>
+#include <avr/wdt.h>
+
+#include "defs.h"
+
+#include "usart.h"
+#include "timer.h"
+#include "sleep.h"
+#include "interrupt.h"
+
+#define START_CMD '>'
+#define END_CMD '.'
+
 #define EXIT "exit"
 
-int get_cmd(char *data, char *cmd);
-int talk_back(void);
+extern unsigned char FLAG;
+
+void toggle_tranceiver(toggle_t choice);
+unsigned char get_cmd(char *cmd);
+unsigned char talk_back(void);
 
 #endif //TALK_BACK_H_
 

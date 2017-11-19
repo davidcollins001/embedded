@@ -13,7 +13,6 @@ class Buf(Enum):
     RX = 0
     TX = 1
 
-
 class TestUsart(unittest.TestCase):
 
     def test_usart_puts(self):

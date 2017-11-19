@@ -5,7 +5,13 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 
-void init_pcint2(void);
+#include "defs.h"
+#include "talk_back.h"
+
+extern unsigned char FLAG;
+
+void init_interrupt(void);
+void toggle_interrupt(toggle_t choice);
 
 #endif //INTERRUPT_H_
 

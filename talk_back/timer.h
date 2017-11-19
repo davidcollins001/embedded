@@ -8,9 +8,13 @@
 
 #include "defs.h"
 
-void init_timer(unsigned int rate);
-
 unsigned char tick;
+
+void init_timer(int rate);
+void wdt_enable_int(void);
+void wdt_disable_int(void);
+void init_timer_1(unsigned char rate);
+void init_timer(int rate);
 
 #endif //TIMER_H_
 

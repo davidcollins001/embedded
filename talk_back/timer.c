@@ -9,23 +9,33 @@ ISR(TIMER1_COMPB_vect) {
 */
 
 ISR(WDT_vect) {
-    tick++;
+    wdt_disable();
+    // unset waiting flag to go back to sleep
+    FLAG &= ~_BV(WAITING_INPUT);
 }
 
-
-void init_wdt(unsigned int rate) {
-
-    // // set WDT to interrupt
-    // WDTCSR |= _BV(WDIE)
-    // WDTCSR &= ~_BV(WDE)
-
-    // // setup timer interrupt with 1024 prescale
-    // WDTCSR |= _BV(WDP3) | _BV(WDP0)
-
-    // wdt_enable(1);
+void wdt_enable_int(void) {
+    // set WDT to interrupt mode, not reset
+    WDTCSR &= _BV(WDIE) | ~_BV(WDE);
 }
 
-void init_timer_1(unsigned int rate) {
+void wdt_disable_int(void) {
+    // set WDT to stopped mode
+    WDTCSR &= ~_BV(WDIE) & ~_BV(WDE);
+}
+
+void init_wdt(unsigned char rate) {
+    // reset any watchdog resets
+    MCUSR = 0;
+
+    // set WDT to interrupt mode, not reset
+    wdt_enable_int();
+
+    // setup timer interrupt with 1024 prescale - 8s
+    WDTCSR |= _BV(WDP3) | _BV(WDP0);
+}
+
+void init_timer_1(unsigned char rate) {
     // setup pin interrupt
     //EIMSK |= _BV(INT0);
     // EICRA |= _BV(ISC00) | _BV(ISC01);
@@ -42,7 +52,10 @@ void init_timer_1(unsigned int rate) {
     TIMSK1 |= _BV(OCIE1B);
 }
 
-void init_timer(unsigned int rate) {
+void init_timer(int rate) {
+    tick = 0;
+
     init_timer_1(rate);
+    // init_wdt(rate);
 }
 
