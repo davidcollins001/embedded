@@ -3,45 +3,48 @@
 
 #include<util/delay.h>
 
-static unsigned char *partial_cmd_ptr;
+static unsigned char partial_cmd_ptr = 0;
 
 void toggle_tranceiver(toggle_t choice) {
     _toggle(&UCSR0B, _BV(RXEN0) | _BV(TXEN0), choice);
 }
 
-unsigned char get_cmd(char *cmd) {
+char get_cmd(char *cmd) {
     // get cmd (between START_CMD and END_CMD) from input string
     char input[64], *data_ptr, *cmd_ptr = cmd;
     unsigned char len, count = 0;
 
+    cmd_ptr = cmd + partial_cmd_ptr;
+
     len = usart_gets(input);
     data_ptr = input;
+
     while(len && *data_ptr) {
 
         // start of input found
-        if((*data_ptr == START_CMD) || count) {
+        if((*data_ptr == START_CMD) || count || partial_cmd_ptr) {
             // move past start pointer
-            if(!count)
+            if(!count && !partial_cmd_ptr)
                 data_ptr++;
 
             // end of input found
             if(*data_ptr == END_CMD) {
-                cmd[len] = '\n';
-                cmd[len+1] = '\0';
+                count += partial_cmd_ptr;
+                partial_cmd_ptr = 0;
                 return count;
             }
 
             // copy cmd from data to cmd buffer
             *cmd_ptr++ = *data_ptr;
+
             count++;
         }
         data_ptr++;
     }
     // didn't find the END_CMD char so reset
-    *cmd = '\0';
-    // partial_cmd_ptr =
+    partial_cmd_ptr = count;
 
-    return 0;
+    return -count;
 }
 
 static void prepare_sleep(void) {
@@ -61,7 +64,7 @@ static void prepare_sleep(void) {
     PORTC = 0;
 }
 
-unsigned char talk_back(void) {
+int talk_back(void) {
     unsigned char len = 0;
     char cmd[64];
 
@@ -86,6 +89,8 @@ unsigned char talk_back(void) {
 
                 // send input cmd back to usart
                 usart_puts(cmd);
+                while(uart_tx_complete())
+                    ;
 
                 // exit - needed to prevent tests spinning
                 if(! strncmp(cmd, EXIT, 4))

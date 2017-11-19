@@ -25,8 +25,8 @@
 extern unsigned char FLAG;
 
 void toggle_tranceiver(toggle_t choice);
-unsigned char get_cmd(char *cmd);
-unsigned char talk_back(void);
+char get_cmd(char *cmd);
+int talk_back(void);
 
 #endif //TALK_BACK_H_
 

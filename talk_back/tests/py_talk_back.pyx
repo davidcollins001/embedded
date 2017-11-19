@@ -9,9 +9,16 @@ cimport ctalk_back
 def toggle_tranceiver(choice):
     ctalk_back.toggle_tranceiver(choice)
 
-def get_cmd():
+def get_cmd(partial_str=None):
     cdef int count
     cdef char cmd[64]
+    cdef char *partial
+
+    ## insert partial into beginning of output buffer
+    if partial_str:
+        partial = partial_str
+        for i in range(len(partial_str)):
+            cmd[i] = partial[i]
 
     count = ctalk_back.get_cmd(cmd)
     return count, cmd

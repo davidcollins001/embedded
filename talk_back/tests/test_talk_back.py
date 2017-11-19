@@ -18,37 +18,48 @@ class Test_talk_back(unittest.TestCase):
                 data = "missed command.>%s.junk" % msg
                 isr_USART_RX_vect(data)
                 l, cmd = get_cmd()
-                self.assertEqual(l, data.rindex('.')-data.index('>')-1)
-                self.assertEqual(cmd[:l], data[data.index('>')+1:
-                                               data.rindex('.')])
+                sndx = data.index('>')
+                endx = sndx + data[sndx:].index('.')
+                self.assertEqual(l, endx-sndx-1)
+                self.assertEqual(cmd[:l], data[sndx+1: endx])
 
     def test_char_cmd(self):
         ## cbeck when buffer is full
         data = "missed command.>S.junk"
         isr_USART_RX_vect(data)
         l, cmd = get_cmd()
-        self.assertEqual(l, data.rindex('.')-data.index('>')-1)
-        self.assertEqual(cmd[:l], data[data.index('>')+1:
-                                       data.rindex('.')])
+        sndx = data.index('>')
+        endx = sndx + data[sndx:].index('.')
+        self.assertEqual(l, endx-sndx-1)
+        self.assertEqual(cmd[:l], data[sndx+1: endx])
 
     def test_partial_cmd(self):
-        ## cbeck when buffer is full
-        data = "missed command.>junk"
-        isr_USART_RX_vect(data)
-        # print "--> ", usart_gets()
-        l, cmd = get_cmd()
-        print cmd
-        self.assertEqual(l, 0)
-        self.assertEqual(cmd, "")
+        ## cbeck when command is read partially multiple times
+        data1 = "missed command.>start"
+        isr_USART_RX_vect(data1)
+        l1, cmd = get_cmd()
+        sndx = data1.index('>')
+        self.assertEqual(abs(l1), len(data1)-sndx-1)
+        self.assertEqual(cmd[:abs(l1)], data1[sndx+1:])
+
+        data2 = "end command.junk"
+        isr_USART_RX_vect(data2)
+        l2, cmd = get_cmd(partial_str=cmd)
+        endx = data2.index('.')
+
+        full_cmd = data1[l1:]+data2[:endx]
+        self.assertEqual(l2, len(full_cmd))
+        self.assertEqual(cmd[:l2], full_cmd)
 
     def test_empty_cmd(self):
         ## cbeck when buffer is full
         data = "missed command.>.junk"
         isr_USART_RX_vect(data)
         l, cmd = get_cmd()
-        self.assertEqual(l, data.rindex('.')-data.index('>')-1)
-        self.assertEqual(cmd[:l], data[data.index('>')+1:
-                                       data.rindex('.')])
+        sndx = data.index('>')
+        endx = sndx + data[sndx:].index('.')
+        self.assertEqual(l, endx-sndx-1)
+        self.assertEqual(cmd[:l], data[sndx+1: endx])
 
     def test_toggle_tranceiver(self):
         ## set PCIE2 which is used to set register
@@ -78,7 +89,9 @@ class Test_talk_back(unittest.TestCase):
             ret = talk_back()
 
             ## read data back from usart
-            exp = data[data.index('>')+1: data.rindex('.')]
+            sndx = data.index('>')
+            endx = sndx + data[sndx:].index('.')
+            exp = data[sndx+1: endx]
             output = isr_USART_UDRE_vect()
             msg = "Expected \"%s\" but got \"%s\"" % (exp, output)
             self.assertTrue(exp in output, msg)
