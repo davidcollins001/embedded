@@ -9,14 +9,14 @@ ISR(TIMER1_COMPB_vect) {
 */
 
 ISR(WDT_vect) {
-    wdt_disable();
     // unset waiting flag to go back to sleep
     FLAG &= ~_BV(WAITING_INPUT);
 }
 
 void wdt_enable_int(void) {
     // set WDT to interrupt mode, not reset
-    WDTCSR &= _BV(WDIE) | ~_BV(WDE);
+    WDTCSR |= _BV(WDIE);
+    WDTCSR &= ~_BV(WDE);
 }
 
 void wdt_disable_int(void) {

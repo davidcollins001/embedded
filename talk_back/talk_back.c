@@ -56,12 +56,13 @@ static void prepare_sleep(void) {
     // switch on PCINT to use the pins for usart
     toggle_interrupt(ON);
 
+    PORTC = 0;
+
     sleep_now(SLEEP_MODE_PWR_DOWN);
+    PORTC |= 1;
 
     // reset watchdog timer for interrupt
     wdt_enable_int();
-
-    PORTC = 0;
 }
 
 int talk_back(void) {
