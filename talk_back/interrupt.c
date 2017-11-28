@@ -14,7 +14,16 @@ void init_interrupt(void) {
     PCMSK2 |= _BV(PCINT16);
 }
 
+#include <util/delay.h>
 void toggle_interrupt(toggle_t choice) {
-    _toggle(&PCICR, _BV(PCIE2), choice);
+    // _toggle(&PCICR, _BV(PCIE2), choice);
+    if(choice == ON)
+        PCICR |= _BV(PCIE2);
+    else if(choice == OFF)
+    {
+        PCICR &= ~_BV(PCIE2);
+        PORTC = (unsigned char)10101010;
+        _delay_ms(500);
+    }
 }
 

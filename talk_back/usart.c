@@ -67,10 +67,11 @@ ISR(USART_RX_vect) {
 
     // TODO: add checking??
     buffer_write(&rx_buffer, UDR0);
+    PORTC ^= 1;
 }
 
-unsigned char uart_tx_complete(void) {
-    return UCSR0A & _BV(UDRE0);
+unsigned char uart_tx_empty(void) {
+    return tx_buffer.head == tx_buffer.tail;
 }
 
 // wrapper to read from ram or flash based no mem_loc

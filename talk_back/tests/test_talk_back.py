@@ -34,7 +34,7 @@ class Test_talk_back(unittest.TestCase):
         self.assertEqual(l, endx - sndx - 1)
         self.assertEqual(cmd[:l], data[sndx + 1: endx])
 
-    def test_partial_cmd(self):
+    def __test_partial_cmd(self):
         ## cbeck when command is read partially multiple times
         data1 = "missed command.>start"
         isr_USART_RX_vect(data1)
@@ -97,8 +97,8 @@ class Test_talk_back(unittest.TestCase):
             msg = "Expected \"%s\" but got \"%s\"" % (exp, output)
             self.assertTrue(exp in output, msg)
 
-            msg = "expected 0 exit status, check exit path"
-            self.assertEqual(ret, 0, msg)
+            msg = "expected 1 exit status, check exit path"
+            self.assertEqual(ret, 1, msg)
 
 
 if __name__ == "__main__":

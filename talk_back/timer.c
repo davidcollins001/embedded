@@ -2,6 +2,8 @@
 #include "timer.h"
 
 
+// https://electronics.stackexchange.com/questions/74840/use-avr-watchdog-like-normal-isr
+
 /*
 ISR(TIMER1_COMPB_vect) {
     tick++;
@@ -11,39 +13,28 @@ ISR(TIMER1_COMPB_vect) {
 ISR(WDT_vect) {
     // unset waiting flag to go back to sleep
     FLAG &= ~_BV(WAITING_INPUT);
-}
-
-void wdt_enable_int(void) {
-    // set WDT to interrupt mode, not reset
-
-	// Watchdog Timer initialization
-	// Watchdog Timer Prescaler: OSC/1024k
-	// Watchdog timeout action: Interrupt
-#pragma optsize-
-	// enter watchdog config mode
-	WDTCSR = (_BV(WDCE) | _BV(WDE));
-	// set interrupt mode with 1024 prescalar (8s)
-	WDTCSR = ((0<<WDE) | (0<<WDE) | _BV(WDP3) | _BV(WDP0));
-	// TODO: what is value of WD_8S compared to WDP3|WDP0
-#ifdef _OPTIMIZE_SIZE_
-#pragma optsize+
-#endif
+    PORTC ^= 16;
 }
 
 void wdt_disable_int(void) {
-    // set WDT to stopped mode
-    WDTCSR = ~_BV(WDIE) & ~_BV(WDE);
+    // Clear the WDT reset flag
+    MCUSR &= ~_BV(WDRF);
+    // Enable the WD Change Bit
+    WDTCSR |= (_BV(WDCE) | _BV(WDE));
+    // Disable the WDT
+    WDTCSR = 0x00;
 }
 
-void init_wdt(unsigned char rate) {
-    // reset any watchdog resets
-    MCUSR = 0;
 
+void wdt_enable_int(void) {
     // set WDT to interrupt mode, not reset
-    wdt_enable_int();
-
-    // setup timer interrupt with 1024 prescale - 8s
-    WDTCSR |= _BV(WDP3) | _BV(WDP0);
+    cli();
+    // enable the WD change bit
+    WDTCSR = (unsigned char)(_BV(WDCE) | _BV(WDE));
+    // enable WDT interrupt and set to 8s
+    //WDTCSR = (unsigned char)(_BV(WDIE) | WDTO_8S);
+    WDTCSR = (unsigned char)(_BV(WDIE) | _BV(WDP3) | _BV(WDP0));
+    sei();
 }
 
 void init_timer_1(unsigned char rate) {
@@ -66,7 +57,6 @@ void init_timer_1(unsigned char rate) {
 void init_timer(int rate) {
     tick = 0;
 
-    init_timer_1(rate);
-    // init_wdt(rate);
+    // init_timer_1(rate);
 }
 

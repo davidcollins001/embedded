@@ -36,7 +36,7 @@ void usart_puts(const char *data);
 
 unsigned char usart_gets(char *data);
 
-unsigned char uart_tx_complete(void);
+unsigned char uart_tx_empty(void);
 
 volatile buffer_t _buffer_debug(char buf, char debug);
 
