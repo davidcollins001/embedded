@@ -5,8 +5,10 @@
 #define _BV(name) name
 #define ISR(name) void isr_##name()
 
-int wdt_enable(int mode);
-int wdt_disable();
+extern unsigned char WDCE;
+
+void wdt_enable(int mode);
+void wdt_disable();
 
 #endif //AVR_WDT_
 

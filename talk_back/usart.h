@@ -2,6 +2,8 @@
 #ifndef USART_H_
 #define USART_H_
 
+#include <string.h>
+
 #include <avr/pgmspace.h>
 #include <avr/interrupt.h>
 #include <avr/io.h>
@@ -22,8 +24,8 @@ typedef struct buffer {
 } buffer_t;
 
 // create buffer for usart to put data in
-volatile static buffer_t tx_buffer = {{}, 0, 0};
-volatile static buffer_t rx_buffer = {{}, 0, 0};
+volatile static buffer_t tx_buffer;
+volatile static buffer_t rx_buffer;
 
 void init_usart(void);
 void usart_putc(const char c);

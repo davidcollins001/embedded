@@ -1,6 +1,8 @@
 
 #include "wdt.h"
 
-int wdt_enable(int mode) {}
-int wdt_disable() {}
+unsigned char WDCE = 0;
+
+void wdt_enable(int mode) {}
+void wdt_disable() {}
 

@@ -1,7 +1,6 @@
 
 import unittest
 from py_talk_back import toggle_interrupt, PCIE2, PCICR
-import py_talk_back
 
 ON, OFF = 0, 1
 

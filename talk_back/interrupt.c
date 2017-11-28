@@ -3,11 +3,6 @@
 
 
 ISR(PCINT2_vect) {
-    // switch off PCINT to use the pins for usart
-    toggle_interrupt(OFF);
-    // switch on usart
-    toggle_tranceiver(ON);
-
     FLAG |= _BV(WAITING_INPUT);
     PORTC ^= 32;
 }

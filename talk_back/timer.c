@@ -15,13 +15,24 @@ ISR(WDT_vect) {
 
 void wdt_enable_int(void) {
     // set WDT to interrupt mode, not reset
-    WDTCSR |= _BV(WDIE);
-    WDTCSR &= ~_BV(WDE);
+
+	// Watchdog Timer initialization
+	// Watchdog Timer Prescaler: OSC/1024k
+	// Watchdog timeout action: Interrupt
+#pragma optsize-
+	// enter watchdog config mode
+	WDTCSR = (_BV(WDCE) | _BV(WDE));
+	// set interrupt mode with 1024 prescalar (8s)
+	WDTCSR = ((0<<WDE) | (0<<WDE) | _BV(WDP3) | _BV(WDP0));
+	// TODO: what is value of WD_8S compared to WDP3|WDP0
+#ifdef _OPTIMIZE_SIZE_
+#pragma optsize+
+#endif
 }
 
 void wdt_disable_int(void) {
     // set WDT to stopped mode
-    WDTCSR &= ~_BV(WDIE) & ~_BV(WDE);
+    WDTCSR = ~_BV(WDIE) & ~_BV(WDE);
 }
 
 void init_wdt(unsigned char rate) {

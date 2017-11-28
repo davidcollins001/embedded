@@ -4,7 +4,7 @@
 #include "usart.h"
 
 
-static inline void enable_receiving(void);
+static __inline void enable_receiving(void);
 
 void init_usart(void) {
     UBRR0H = (BAUDRATE >> 8);
@@ -15,20 +15,20 @@ void init_usart(void) {
     enable_receiving();
 }
 
-static inline void enable_transmission(void) {
+static __inline void enable_transmission(void) {
     UCSR0B |= _BV(UDRIE0);
 }
 
-static inline void enable_receiving(void) {
+static __inline void enable_receiving(void) {
     UCSR0B |= _BV(UDRIE0);
     UCSR0B |= _BV(RXCIE0);
 }
 
-static inline void disable_transmission(void) {
+static __inline void disable_transmission(void) {
     UCSR0B &= ~_BV(UDRIE0);
 }
 
-static inline buf_status_t buffer_write(volatile buffer_t *buffer, char c) {
+static __inline buf_status_t buffer_write(volatile buffer_t *buffer, char c) {
     // copy a char to internal buffer
     unsigned char next = (buffer->head + 1) % BUF_SZ;
 
@@ -40,7 +40,7 @@ static inline buf_status_t buffer_write(volatile buffer_t *buffer, char c) {
     return BUFFER_OK;
 }
 
-static inline buf_status_t buffer_read(volatile buffer_t *buffer, char *c) {
+static __inline buf_status_t buffer_read(volatile buffer_t *buffer, char *c) {
     // read a char from internal buffer
     if(buffer->head == buffer->tail)
         return BUFFER_EMPTY;
@@ -114,12 +114,12 @@ static void usart_puts_T(const char *data, mem_type_t type) {
 
 // read string from flash
 void usart_puts_P(const char *data) {
-    return usart_puts_T(data, FLASH);
+    usart_puts_T(data, FLASH);
 }
 
 // read string from ram
 void usart_puts(const char *data) {
-    return usart_puts_T(data, RAM);
+    usart_puts_T(data, RAM);
 }
 
 #include<stdio.h>
@@ -149,15 +149,22 @@ unsigned char usart_getc(void) {
 volatile buffer_t _buffer_debug(char buf, char debug) {
     // buf = 0 -> rx_buffer
     // buf = 1 -> tx_buffer
-    char buf_str[3];
+    char buf_str[3], buf_type[3];
     buffer_t buffer;
 
     if(buf == 0) {
-        strlcpy(buf_str, "rx", 3);
+#ifdef _WIN32
+        strncpy(buf_str, "rx", 2);
+#else
+        strlcpy(buf_str, "rx", 2);
+#endif
         buffer = rx_buffer;
-    }
-    else if(buf == 1) {
-        strlcpy(buf_str, "tx", 3);
+    } else {
+#ifdef _WIN32
+        strncpy(buf_str, "tx", 2);
+#else
+        strlcpy(buf_str, "tx", 2);
+#endif
         buffer = tx_buffer;
     }
 

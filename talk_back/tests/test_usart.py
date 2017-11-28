@@ -2,16 +2,17 @@
 import unittest
 from enum import Enum
 from py_talk_back import (
-        usart_puts, usart_gets, isr_USART_UDRE_vect, isr_USART_RX_vect,
-        buffer_debug
+    usart_puts, usart_gets, isr_USART_UDRE_vect, isr_USART_RX_vect, buffer_debug
 )
 
 BUF_SZ = 64
 DEBUG = 0
 
+
 class Buf(Enum):
     RX = 0
     TX = 1
+
 
 class TestUsart(unittest.TestCase):
 

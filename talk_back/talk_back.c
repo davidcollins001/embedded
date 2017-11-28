@@ -59,11 +59,20 @@ static void prepare_sleep(void) {
     PORTC = 0;
 
     sleep_now(SLEEP_MODE_PWR_DOWN);
-    PORTC |= 1;
+
+    // switch off PCINT to use the pins for usart
+    toggle_interrupt(OFF);
+    // switch on usart
+    toggle_tranceiver(ON);
 
     // reset watchdog timer for interrupt
-    wdt_enable_int();
+    // wdt_enable_int();
 }
+
+// TESTING:
+//	1) setup wdt, sleep, wdt interrupt and flash light
+//  2) as 1, setup wdt after sleep, usart interrupt
+//	3) as 1 and 2, usart to wake, wdt to return to sleep
 
 int talk_back(void) {
     unsigned char len = 0;
