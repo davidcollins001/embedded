@@ -3,9 +3,10 @@ cdef extern from "../talk_back.h":
     ctypedef enum toggle_t:
         ON
         OFF
-    char get_cmd(char *cmd)
+    unsigned char get_cmd(char *cmd)
     void toggle_tranceiver(toggle_t choice)
     int talk_back()
+    unsigned char FLAG
 
 
 cdef extern from "lib/avr/io.h":

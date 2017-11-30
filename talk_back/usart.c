@@ -127,6 +127,7 @@ void usart_puts(const char *data) {
 // copy string from buffer to user buffer
 unsigned char usart_gets(char *data) {
     unsigned char count = 0;
+    printf("------- in usart_gets -------\n");
     while(buffer_read(&rx_buffer, data++) != BUFFER_EMPTY)
         count++;
     return count;
@@ -150,7 +151,7 @@ unsigned char usart_getc(void) {
 volatile buffer_t _buffer_debug(char buf, char debug) {
     // buf = 0 -> rx_buffer
     // buf = 1 -> tx_buffer
-    char buf_str[3], buf_type[3];
+    char buf_str[3];
     buffer_t buffer;
 
     if(buf == 0) {

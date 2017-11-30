@@ -12,7 +12,7 @@ if platform.system() == "Windows":
     compile_args = [""]
     link_args = ["-dll"]
 else:
-    compile_args = ["-g"]
+    compile_args = ["-g", "-DTESTS"]
     link_args = ["-shared", "-g"]
 
 

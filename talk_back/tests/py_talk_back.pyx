@@ -47,4 +47,11 @@ def TXEN0(value=None):
     else:
         return ctalk_back.TXEN0
 
+def FLAG(value=None):
+    if value:
+        ctalk_back.FLAG = value
+    else:
+        return ctalk_back.FLAG
+
+
 

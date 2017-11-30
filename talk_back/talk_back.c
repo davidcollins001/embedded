@@ -6,48 +6,74 @@
 // check flag to see if woken up
 // https://arduino.stackexchange.com/questions/13167/put-atmega328-in-very-deep-sleep-and-listen-to-serial
 
-static unsigned char partial_cmd_ptr = 0;
 
 void toggle_tranceiver(toggle_t choice) {
     _toggle(&UCSR0B, _BV(RXEN0) | _BV(TXEN0), choice);
 }
 
-char *get_cmd(void) {
+int n = 0;
+unsigned char test_usart_gets(char *cmd) {
+    int len;
+    n++;
+
+    if(n == 1) {
+        return strlcpy(cmd, "missed command.>start-", 23);
+    } else if(n == 2) {
+        return strlcpy(cmd, "end command.junk", 17);
+    }
+
+    return 0;
+}
+
+unsigned char get_cmd(char *cmd) {
     // get cmd (between START_CMD and END_CMD) from input string
-    char input[64], *data_ptr, *start_ptr = 0, *end_ptr = 0;
-    unsigned char len, count = 0;
+    char *start_ptr = 0, *end_ptr = 0;
+    unsigned char len, processed_len = 0;
 
     // loop until
-    while((len && *data_ptr != END_CMD) || (FLAG & _BV(WAITING_INPUT))) {
+    while(FLAG & _BV(WAITING_INPUT)) {
         PORTC ^= 4;
 
-        len = usart_gets(input);
-        data_ptr = input;
+#ifdef TEST
+        len = usart_gets(cmd + processed_len);
+#else
+        len = test_usart_gets(cmd + processed_len);
+#endif // TEST
 
-        start_ptr = strchr(data_ptr, START_CMD);
+        int i;
+        printf("-> %d cmd: ", n);
+        for(i=0; i< len+processed_len; i++)
+            printf("%c", cmd[i]);
+        printf(" %d\n", len);
+
+        start_ptr = strchr(cmd, START_CMD);
+
         // found start of command
         if(start_ptr) {
-
+            // search for end of command
             end_ptr = strchr(start_ptr, END_CMD);
-            // found end of command
             if(end_ptr) {
-                // command is from start_ptr to end_ptr
+                // ensure string is null terminated
                 *(end_ptr + 1) = '\0';
-                return start_cmd;
 
+                // copy command from start_ptr to end_ptr
+                len = strlcpy(cmd, start_ptr + 1, end_ptr - start_ptr);
+                assert(processed_len == strnlen(cmd, sizeof(cmd)));
+                assert(processed_len == end_ptr - start_ptr + 1);
+                printf("** start ptr-> end ptr: %d\n", end_ptr - start_ptr);
+
+                return end_ptr - start_ptr - 1;
+
+            } else {
+                // keep track of how much command so far
+                processed_len += len;
             }
         }
-        else {
-            // got partial command wait for rest
-        }
-
         // use idle sleep - usart can wake
         // sleep_now(SLEEP_MODE_IDLE);
     }
-    // didn't find the END_CMD char so reset
-    partial_cmd_ptr = count;
 
-    return -count;
+    return 0;
 }
 
 static void prepare_sleep(void) {
@@ -82,7 +108,7 @@ static void prepare_sleep(void) {
 
 int talk_back(void) {
     unsigned char len = 0;
-    char cmd[64], *cptr;
+    char cmd[64];
 
     while(true) {
 

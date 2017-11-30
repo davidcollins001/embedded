@@ -17,3 +17,6 @@ void init_timer_1(unsigned char rate);
 
 #endif //TIMER_H_
 
+// input: abcde>abcd
+// cmd:   abcde>abcd
+// start_cmd:  |
