@@ -1,7 +1,5 @@
 
 import unittest
-from mock import patch
-import py_talk_back
 from py_talk_back import (
     toggle_tranceiver, get_cmd, talk_back, isr_USART_RX_vect,
     isr_USART_UDRE_vect, isr_PCINT2_vect, UCSR0B, RXEN0, TXEN0, FLAG
@@ -13,6 +11,8 @@ DEBUG = 1
 
 
 count = 0
+
+
 def usart_gets(cmd):
     global count
     try:
@@ -29,13 +29,15 @@ class Test_talk_back(unittest.TestCase):
     def setUp(self):
         FLAG(1)
 
-    def NO_test_get_cmd(self):
+    def test_get_cmd(self):
         ## check when buffer is full
-        for _ in xrange(7):
+        for i in xrange(7):
             for msg in ["send str", "exit"]:
+                print "__ %d %s __" % (i, msg)
                 data = "missed command.>%s.junk" % msg
                 isr_USART_RX_vect(data)
                 l, cmd = get_cmd()
+                print ']] ', l, cmd
                 sndx = data.index('>')
                 endx = sndx + data[sndx:].index('.')
                 self.assertEqual(l, endx - sndx - 1)
@@ -51,25 +53,26 @@ class Test_talk_back(unittest.TestCase):
         self.assertEqual(l, endx - sndx - 1)
         self.assertEqual(cmd[:l], data[sndx + 1: endx])
 
-    @patch.object(py_talk_back, "usart_gets", usart_gets)
+    # @patch.object(py_talk_back, "usart_gets", usart_gets)
     def test_partial_cmd(self):
         ## TODO: mock usart_gets to return data1 first then data2
 
-        ## cbeck when command is read partially multiple times
+        ## check when command is read partially multiple times
         data1 = "missed command.>start-"
         data2 = "end command.junk"
 
         isr_USART_RX_vect(data1)
+        isr_USART_RX_vect("|")
+        isr_USART_RX_vect(data2)
         l1, cmd = get_cmd()
         # isr_USART_RX_vect(data2)
-        print "-->", l1, cmd
         # l2, cmd = get_cmd()
 
         # sndx = data1.index('>')
         # self.assertEqual(abs(l1), len(data1) - sndx - 1)
         # self.assertEqual(cmd[:abs(l1)], data1[sndx + 1:])
 
-        endx = data2.index('.')
+        # endx = data2.index('.')
 
         # full_cmd = data1[l1:] + data2[:endx]
         full_cmd = cmd

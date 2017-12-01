@@ -4,7 +4,7 @@
 #include "usart.h"
 
 
-static __inline void enable_receiving(void);
+inline static void enable_receiving(void);
 
 void init_usart(void) {
     UBRR0H = (BAUDRATE >> 8);
@@ -15,20 +15,20 @@ void init_usart(void) {
     enable_receiving();
 }
 
-static __inline void enable_transmission(void) {
+inline static void enable_transmission(void) {
     UCSR0B |= _BV(UDRIE0);
 }
 
-static __inline void enable_receiving(void) {
+inline static void enable_receiving(void) {
     UCSR0B |= _BV(UDRIE0);
     UCSR0B |= _BV(RXCIE0);
 }
 
-static __inline void disable_transmission(void) {
+inline static void disable_transmission(void) {
     UCSR0B &= ~_BV(UDRIE0);
 }
 
-static __inline buf_status_t buffer_write(volatile buffer_t *buffer, char c) {
+inline static buf_status_t buffer_write(volatile buffer_t *buffer, char c) {
     // copy a char to internal buffer
     unsigned char next = (buffer->head + 1) % BUF_SZ;
 
@@ -40,7 +40,7 @@ static __inline buf_status_t buffer_write(volatile buffer_t *buffer, char c) {
     return BUFFER_OK;
 }
 
-static __inline buf_status_t buffer_read(volatile buffer_t *buffer, char *c) {
+inline static buf_status_t buffer_read(volatile buffer_t *buffer, char *c) {
     // read a char from internal buffer
     if(buffer->head == buffer->tail)
         return BUFFER_EMPTY;
@@ -127,7 +127,6 @@ void usart_puts(const char *data) {
 // copy string from buffer to user buffer
 unsigned char usart_gets(char *data) {
     unsigned char count = 0;
-    printf("------- in usart_gets -------\n");
     while(buffer_read(&rx_buffer, data++) != BUFFER_EMPTY)
         count++;
     return count;
@@ -156,14 +155,14 @@ volatile buffer_t _buffer_debug(char buf, char debug) {
 
     if(buf == 0) {
 #ifdef _WIN32
-        strncpy(buf_str, "rx", 2);
+        strncpy_s(buf_str, sizeof(buf_str), "rx", 2);
 #else
         strlcpy(buf_str, "rx", 2);
 #endif
         buffer = rx_buffer;
     } else {
 #ifdef _WIN32
-        strncpy(buf_str, "tx", 2);
+        strncpy_s(buf_str, sizeof(buf_str), "tx", 2);
 #else
         strlcpy(buf_str, "tx", 2);
 #endif

@@ -11,18 +11,60 @@ void toggle_tranceiver(toggle_t choice) {
     _toggle(&UCSR0B, _BV(RXEN0) | _BV(TXEN0), choice);
 }
 
-int n = 0;
+// TODO: turn this into a cython function
 unsigned char test_usart_gets(char *cmd) {
-    int len;
-    n++;
+    static char n = 0, reset = false;
+    char len;
+    char *msg;
+	static char *msg1, *msg2;
+    char SPLIT_CHAR = '|';
+    printf("1>>msg %d\n", n);
+    reset = true;
 
-    if(n == 1) {
-        return strlcpy(cmd, "missed command.>start-", 23);
-    } else if(n == 2) {
-        return strlcpy(cmd, "end command.junk", 17);
+    // both strings have been written at once, with a separator the string
+    // will be consumed in two goes to test continuation in get_cmd()
+    if(n == 0) {
+        printf("2>>\n");
+        len = usart_gets(cmd);
+        msg1 = cmd;
+        msg2 = strchr(cmd, SPLIT_CHAR);
+        if(msg2) {
+            *msg2 = '\0';
+            *msg2++;
+            printf("reset %d\n", reset);
+            reset = false;
+            printf("reset %d\n", reset);
+        }
     }
 
-    return 0;
+	n++;
+
+    if(n == 2) {
+        // following doesn't seem to work
+        // msg = (n == 1) ? msg1 : msg 2;
+        if(n == 1)
+            msg = msg1;
+        else {
+            msg = msg2;
+        }
+        printf("3>>msg %d <%s> <%s> <%s>\n", n, msg, msg1, msg2);
+    } else
+        msg = msg1;
+
+    printf("reset %d\n", reset);
+    if(reset == true) {
+        printf("4>>msg %d\n", n);
+        n = 0;
+        msg1 = msg2 = NULL;
+    }
+    printf("5>>msg %d <%s> <%d>\n", n, msg, strlen(msg));
+
+#ifdef _WIN32
+	strncpy(cmd, msg, strlen(msg)+1);
+	return strlen(msg);
+#else
+	return (unsigned char)strlcpy(cmd, msg, strlen(msg)+1);
+#endif
 }
 
 unsigned char get_cmd(char *cmd) {
@@ -33,36 +75,35 @@ unsigned char get_cmd(char *cmd) {
     // loop until
     while(FLAG & _BV(WAITING_INPUT)) {
         PORTC ^= 4;
+        printf("msg <%s>\n", cmd);
 
-#ifdef TEST
+#ifndef TEST
         len = usart_gets(cmd + processed_len);
 #else
         len = test_usart_gets(cmd + processed_len);
 #endif // TEST
+        printf("msg# <%s>\n", cmd);
 
-        int i;
-        printf("-> %d cmd: ", n);
-        for(i=0; i< len+processed_len; i++)
-            printf("%c", cmd[i]);
-        printf(" %d\n", len);
-
+        // search for start of command
         start_ptr = strchr(cmd, START_CMD);
-
-        // found start of command
         if(start_ptr) {
             // search for end of command
             end_ptr = strchr(start_ptr, END_CMD);
             if(end_ptr) {
-                // ensure string is null terminated
-                *(end_ptr + 1) = '\0';
-
                 // copy command from start_ptr to end_ptr
+#ifdef _WIN32
+                len = strncpy(cmd, start_ptr + 1, end_ptr - start_ptr );
+#else
                 len = strlcpy(cmd, start_ptr + 1, end_ptr - start_ptr);
+#endif
+                // ensure command string is null terminated
+                *(cmd + (end_ptr - start_ptr) - 1) = '\0';
+
                 assert(processed_len == strnlen(cmd, sizeof(cmd)));
                 assert(processed_len == end_ptr - start_ptr + 1);
-                printf("** start ptr-> end ptr: %d\n", end_ptr - start_ptr);
+                printf("xxx %d\n", ((end_ptr - start_ptr) - 1));
 
-                return end_ptr - start_ptr - 1;
+                return (unsigned char)((end_ptr - start_ptr) - 1);
 
             } else {
                 // keep track of how much command so far
@@ -72,7 +113,6 @@ unsigned char get_cmd(char *cmd) {
         // use idle sleep - usart can wake
         // sleep_now(SLEEP_MODE_IDLE);
     }
-
     return 0;
 }
 
@@ -86,7 +126,7 @@ static void prepare_sleep(void) {
     toggle_interrupt(ON);
 
     PORTC = 255;
-    _delay_ms(500);
+    _delay_ms((char)500);
 
     PORTC = 0;
 
@@ -116,7 +156,7 @@ int talk_back(void) {
         prepare_sleep();
 
         PORTC ^= 2;
-        _delay_ms(500);
+        _delay_ms((char)500);
 
         len = get_cmd(cmd);
 

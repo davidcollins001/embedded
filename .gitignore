@@ -3,8 +3,9 @@
 *.elf
 *.hex
 *.o
-*.so
 *.pyc
-tests/py*.c
 *.core
 build
+tests/py*.c
+tests/*.so
+tests/*.pyd

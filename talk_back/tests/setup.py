@@ -9,10 +9,10 @@ import platform
 
 
 if platform.system() == "Windows":
-    compile_args = [""]
+    compile_args = ["/DTEST"]
     link_args = ["-dll"]
 else:
-    compile_args = ["-g", "-DTESTS"]
+    compile_args = ["-g", "-DTEST"]
     link_args = ["-shared", "-g"]
 
 
