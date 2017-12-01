@@ -13,8 +13,10 @@ cdef extern from "lib/avr/io.h":
     unsigned char UCSR0B
     unsigned char RXEN0
     unsigned char TXEN0
+    unsigned char UDRE0
+    unsigned char UCSR0A
 
 
 cdef extern from "../interrupt.h":
-    void isr_PCINT2_vect();
+    void isr_PCINT2_vect()
 

@@ -11,8 +11,8 @@ unsigned char INTF1 = 0x2;
 
 unsigned char TXEN0 = 0x1;
 unsigned char RXEN0 = 0x2;
-unsigned char RXCIE0 = 0x3;
-unsigned char RXC0 = 0x4;
+unsigned char RXCIE0 = 0x4;
+unsigned char RXC0 = 0x8;
 
 unsigned char PCICR = 0x0;
 unsigned char PCIE2 = 0x1;
@@ -25,11 +25,11 @@ unsigned char PORTC = 0x1;
 
 unsigned char UBRR0H = 0x1;
 unsigned char UBRR0L = 0x2;
-unsigned char UCSR0A = 0x3;
-unsigned char UCSR0B = 0x4;
-unsigned char UDRIE0 = 0x5;
-unsigned char UDRE0 = 0x6;
-unsigned char UDR0 = 0x7;
+unsigned char UCSR0A = 0x0;
+unsigned char UCSR0B = 0x0;
+unsigned char UDRIE0 = 0x1;
+unsigned char UDRE0 = 0x2;
+unsigned char UDR0 = 0x4;
 
 unsigned char TCCR1B = 0x1;
 unsigned char CS10 = 0x1;

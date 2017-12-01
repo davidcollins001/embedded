@@ -7,33 +7,22 @@
 // https://arduino.stackexchange.com/questions/13167/put-atmega328-in-very-deep-sleep-and-listen-to-serial
 
 
-void toggle_tranceiver(toggle_t choice) {
-    _toggle(&UCSR0B, _BV(RXEN0) | _BV(TXEN0), choice);
-}
-
 // TODO: turn this into a cython function
 unsigned char test_usart_gets(char *cmd) {
-    static char n = 0, reset = false;
-    char len;
-    char *msg;
-	static char *msg1, *msg2;
-    char SPLIT_CHAR = '|';
-    printf("1>>msg %d\n", n);
-    reset = true;
+    char len, *msg, SPLIT_CHAR = '|';
+    static char n = 0, *msg1, *msg2, reset = true;
 
     // both strings have been written at once, with a separator the string
     // will be consumed in two goes to test continuation in get_cmd()
     if(n == 0) {
-        printf("2>>\n");
         len = usart_gets(cmd);
         msg1 = cmd;
         msg2 = strchr(cmd, SPLIT_CHAR);
         if(msg2) {
             *msg2 = '\0';
             *msg2++;
-            printf("reset %d\n", reset);
+            // expecting a split message so don't reset counter
             reset = false;
-            printf("reset %d\n", reset);
         }
     }
 
@@ -47,17 +36,13 @@ unsigned char test_usart_gets(char *cmd) {
         else {
             msg = msg2;
         }
-        printf("3>>msg %d <%s> <%s> <%s>\n", n, msg, msg1, msg2);
     } else
         msg = msg1;
 
-    printf("reset %d\n", reset);
     if(reset == true) {
-        printf("4>>msg %d\n", n);
         n = 0;
         msg1 = msg2 = NULL;
     }
-    printf("5>>msg %d <%s> <%d>\n", n, msg, strlen(msg));
 
 #ifdef _WIN32
 	strncpy(cmd, msg, strlen(msg)+1);
@@ -65,6 +50,11 @@ unsigned char test_usart_gets(char *cmd) {
 #else
 	return (unsigned char)strlcpy(cmd, msg, strlen(msg)+1);
 #endif
+}
+
+
+void toggle_tranceiver(toggle_t choice) {
+    _toggle(&UCSR0B, _BV(RXEN0) | _BV(TXEN0), choice);
 }
 
 unsigned char get_cmd(char *cmd) {
@@ -75,14 +65,12 @@ unsigned char get_cmd(char *cmd) {
     // loop until
     while(FLAG & _BV(WAITING_INPUT)) {
         PORTC ^= 4;
-        printf("msg <%s>\n", cmd);
 
 #ifndef TEST
         len = usart_gets(cmd + processed_len);
 #else
         len = test_usart_gets(cmd + processed_len);
 #endif // TEST
-        printf("msg# <%s>\n", cmd);
 
         // search for start of command
         start_ptr = strchr(cmd, START_CMD);
@@ -101,7 +89,6 @@ unsigned char get_cmd(char *cmd) {
 
                 assert(processed_len == strnlen(cmd, sizeof(cmd)));
                 assert(processed_len == end_ptr - start_ptr + 1);
-                printf("xxx %d\n", ((end_ptr - start_ptr) - 1));
 
                 return (unsigned char)((end_ptr - start_ptr) - 1);
 
@@ -148,9 +135,10 @@ static void prepare_sleep(void) {
 
 int talk_back(void) {
     unsigned char len = 0;
-    char cmd[64];
+    char cmd[64], *cptr;
 
     while(true) {
+        printf("cmd: \n" );
 
         memset(cmd, 0, sizeof(cmd)/sizeof(cmd[0]));
         prepare_sleep();
@@ -165,11 +153,11 @@ int talk_back(void) {
 
             // send input cmd back to usart
             // usart_puts(cmd);
-            // cptr = cmd;
-            // while(*cptr)
-                // usart_putc(*cptr++);
-            usart_putc(cmd[0]);
+            cptr = cmd;
+            while(*cptr)
+                usart_putc(*cptr++);
 
+        printf(": \n" );
             while(!uart_tx_empty())
                 ;
 
