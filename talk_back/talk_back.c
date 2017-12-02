@@ -75,13 +75,12 @@ uint8_t get_cmd(char *cmd) {
                     // copy command from start_ptr to end_ptr
 #ifdef _WIN32
                     strncpy(cmd, start_ptr + 1, end_ptr - start_ptr - 1);
+                    // ensure command string is null terminated
+                    *(cmd + (end_ptr - start_ptr) + 1) = '\0';
                     len = strlen(msg);
 #else
-                    len = strlcpy(cmd, start_ptr + 1, end_ptr - start_ptr - 1);
+                    len = strlcpy(cmd, start_ptr + 1, end_ptr - start_ptr + 1);
 #endif
-                    // ensure command string is null terminated
-                    *(cmd + (end_ptr - start_ptr) - 1) = '\0';
-
                     // assert((end_ptr - start_ptr) - 1 == strnlen(cmd, len));
 
                     return ((end_ptr - start_ptr) - 1);
