@@ -106,14 +106,12 @@ class Test_talk_back(unittest.TestCase):
         ## check when buffer is full
         for i in xrange(7):
             ## prevent infinite running by sending exit command
-            data = "junk>exit.>start of second"
+            data = "junk>__exit__.>start of second"
 
             ## set flag for incoming data
             isr_PCINT2_vect()
             ## put data into system and process
             isr_USART_RX_vect(data)
-            ## set flags for usart_putc
-            UCSR0A(value=UDRE0())
             ret = talk_back()
 
             msg = "expected 1 exit status, check exit path"
@@ -123,9 +121,11 @@ class Test_talk_back(unittest.TestCase):
             sndx = data.index('>')
             endx = sndx + data[sndx:].index('.')
             exp = data[sndx + 1: endx]
-            # output = isr_USART_UDRE_vect()
-            # msg = "Expected \"%s\" but got \"%s\"" % (exp, output)
-            # self.assertTrue(output in exp, msg)
+            output = isr_USART_UDRE_vect()
+            ## format exp for output format
+            exp = "\n>>> %s\n\n" % exp
+            msg = "Expected \"%s\" but got \"%s\"" % (exp, output)
+            self.assertEqual(output, exp, msg)
 
 
 if __name__ == "__main__":

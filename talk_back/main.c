@@ -22,7 +22,6 @@ static void init(void) {
 
 int main(void) {
     init();
-    PORTC |= 1;
 
     talk_back();
 

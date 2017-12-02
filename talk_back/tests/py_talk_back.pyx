@@ -13,7 +13,7 @@ def toggle_tranceiver(choice):
 
 def get_cmd():
     cdef int count
-    cdef uint8_t cmd[64]
+    cdef char cmd[64]
 
     count = ctalk_back.get_cmd(cmd)
     return count, cmd

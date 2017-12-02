@@ -21,7 +21,7 @@
 #define START_CMD '>'
 #define END_CMD '.'
 
-#define EXIT "exit"
+#define EXIT "__exit__"
 
 extern uint8_t FLAG;
 

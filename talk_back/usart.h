@@ -2,6 +2,7 @@
 #ifndef USART_H_
 #define USART_H_
 
+#include <stdio.h>
 #include <string.h>
 
 #include <avr/pgmspace.h>

@@ -13,16 +13,7 @@ ISR(TIMER1_COMPB_vect) {
 ISR(WDT_vect) {
     // unset waiting flag to go back to sleep
     FLAG &= ~_BV(WAITING_INPUT);
-    PORTC ^= 16;
-}
-
-void wdt_disable_int(void) {
-    // Clear the WDT reset flag
-    MCUSR &= ~_BV(WDRF);
-    // Enable the WD Change Bit
-    WDTCSR |= (_BV(WDCE) | _BV(WDE));
-    // Disable the WDT
-    WDTCSR = 0x00;
+    wdt_reset();
 }
 
 

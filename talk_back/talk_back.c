@@ -56,9 +56,8 @@ uint8_t get_cmd(char *cmd) {
     char *start_ptr = 0, *end_ptr = 0;
     uint8_t len, processed_len = 0;
 
-    // loop until
+    // loop until watchdog expires
     while(FLAG & _BV(WAITING_INPUT)) {
-        PORTC ^= 4;
 
 #ifndef TEST
         len = usart_gets(cmd + processed_len);
@@ -66,50 +65,47 @@ uint8_t get_cmd(char *cmd) {
         len = test_usart_gets(cmd + processed_len);
 #endif // TEST
 
-        // search for start of command
-        start_ptr = strchr(cmd, START_CMD);
-        if(start_ptr) {
-            // search for end of command
-            end_ptr = strchr(start_ptr, END_CMD);
-            if(end_ptr) {
-                // copy command from start_ptr to end_ptr
+        if(len) {
+            // search for start of command
+            start_ptr = strchr(cmd, START_CMD);
+            if(start_ptr) {
+                // search for end of command
+                end_ptr = strchr(start_ptr, END_CMD);
+                if(end_ptr) {
+                    // copy command from start_ptr to end_ptr
 #ifdef _WIN32
-                len = strncpy(cmd, start_ptr + 1, end_ptr - start_ptr );
+                    strncpy(cmd, start_ptr + 1, end_ptr - start_ptr - 1);
+                    len = strlen(msg);
 #else
-                len = strlcpy(cmd, start_ptr + 1, end_ptr - start_ptr);
+                    len = strlcpy(cmd, start_ptr + 1, end_ptr - start_ptr - 1);
 #endif
-                // ensure command string is null terminated
-                *(cmd + (end_ptr - start_ptr) - 1) = '\0';
+                    // ensure command string is null terminated
+                    *(cmd + (end_ptr - start_ptr) - 1) = '\0';
 
-                assert(processed_len == strnlen(cmd, sizeof(cmd)));
-                assert(processed_len == end_ptr - start_ptr + 1);
+                    // assert((end_ptr - start_ptr) - 1 == strnlen(cmd, len));
 
-                return (uint8_t)((end_ptr - start_ptr) - 1);
+                    return ((end_ptr - start_ptr) - 1);
 
-            } else {
-                // keep track of how much command so far
-                processed_len += len;
+                } else {
+                    // keep track of how much command so far
+                    processed_len += len;
+                }
             }
+            // use idle sleep - usart can wake
+            // sleep_now(SLEEP_MODE_IDLE);
         }
-        // use idle sleep - usart can wake
-        // sleep_now(SLEEP_MODE_IDLE);
     }
     return 0;
 }
 
 static void prepare_sleep(void) {
     // disable watchdog before sleeping
-    wdt_disable_int();
+    wdt_disable();
 
     // switch off usart
     toggle_tranceiver(OFF);
     // switch on PCINT to use the pins for usart
     toggle_interrupt(ON);
-
-    PORTC = 255;
-    _delay_ms(500);
-
-    PORTC = 0;
 
     sleep_now(SLEEP_MODE_PWR_DOWN);
 
@@ -119,7 +115,7 @@ static void prepare_sleep(void) {
     toggle_tranceiver(ON);
 
     // reset watchdog timer for interrupt
-    // wdt_enable_int();
+    wdt_enable_int();
 }
 
 // TESTING:
@@ -129,35 +125,29 @@ static void prepare_sleep(void) {
 
 int talk_back(void) {
     uint8_t len = 0;
-    char cmd[64], *cptr;
+    char cmd[64];
 
     while(true) {
 
         memset(cmd, 0, sizeof(cmd));
         prepare_sleep();
 
-        PORTC ^= 2;
-        _delay_ms(500);
-
         len = get_cmd(cmd);
 
         if(len > 0) {
-            PORTC ^= 8;
-
             // send input cmd back to usart
-            // usart_puts(cmd);
-            cptr = cmd;
-            while(*cptr)
-                usart_putc(*cptr++);
+            usart_puts("\n>>> ");
+            usart_puts(cmd);
+            usart_puts("\n");
 
+#ifndef TEST
             while(!uart_tx_empty())
                 ;
-
+#else
             // exit - needed to prevent tests spinning
             if(! strncmp(cmd, EXIT, 4))
-            {
                 return 1;
-            }
+#endif
         }
     }
     return 0;

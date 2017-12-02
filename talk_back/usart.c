@@ -67,7 +67,6 @@ ISR(USART_RX_vect) {
 
     // TODO: add checking??
     buffer_write(&rx_buffer, UDR0);
-    PORTC ^= 1;
 }
 
 uint8_t uart_tx_empty(void) {
@@ -123,7 +122,6 @@ void usart_puts(const char *data) {
     usart_puts_T(data, RAM);
 }
 
-#include<stdio.h>
 // copy string from buffer to user buffer
 uint8_t usart_gets(char *data) {
     uint8_t count = 0;
