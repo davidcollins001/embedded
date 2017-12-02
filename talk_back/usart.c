@@ -30,7 +30,7 @@ inline static void disable_transmission(void) {
 
 inline static buf_status_t buffer_write(volatile buffer_t *buffer, char c) {
     // copy a char to internal buffer
-    unsigned char next = (buffer->head + 1) % BUF_SZ;
+    char next = (buffer->head + 1) % BUF_SZ;
 
     if(next == buffer->tail)
         return BUFFER_FULL;
@@ -70,7 +70,7 @@ ISR(USART_RX_vect) {
     PORTC ^= 1;
 }
 
-unsigned char uart_tx_empty(void) {
+uint8_t uart_tx_empty(void) {
     return tx_buffer.head == tx_buffer.tail;
 }
 
@@ -125,8 +125,8 @@ void usart_puts(const char *data) {
 
 #include<stdio.h>
 // copy string from buffer to user buffer
-unsigned char usart_gets(char *data) {
-    unsigned char count = 0;
+uint8_t usart_gets(char *data) {
+    uint8_t count = 0;
     while(buffer_read(&rx_buffer, data++) != BUFFER_EMPTY)
         count++;
     return count;
@@ -140,7 +140,7 @@ void usart_putc(const char c) {
 }
 
 // blocking read from usart
-unsigned char usart_getc(void) {
+char usart_getc(void) {
     while(!(UCSR0A & _BV(UDRE0)))
         ;
     return UDR0;

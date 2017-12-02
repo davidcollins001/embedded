@@ -19,8 +19,8 @@ typedef enum mem_type {FLASH, RAM} mem_type_t;
 
 #define BUF_SZ 64
 typedef struct buffer {
-    char data[BUF_SZ];
-    unsigned char head, tail;
+    uint8_t data[BUF_SZ];
+    uint8_t head, tail;
 } buffer_t;
 
 // create buffer for usart to put data in
@@ -29,14 +29,14 @@ volatile static buffer_t rx_buffer;
 
 void init_usart(void);
 void usart_putc(const char c);
-unsigned char usart_getc(void);
+char usart_getc(void);
 
 void usart_puts_P(const char *data);
 void usart_puts(const char *data);
 
-unsigned char usart_gets(char *data);
+uint8_t usart_gets(char *data);
 
-unsigned char uart_tx_empty(void);
+uint8_t uart_tx_empty(void);
 
 volatile buffer_t _buffer_debug(char buf, char debug);
 

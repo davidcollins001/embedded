@@ -6,7 +6,7 @@
 #include <avr/power.h>
 #include "defs.h"
 
-void sleep_now(unsigned char mode);
+void sleep_now(uint8_t mode);
 
 #endif //SLEEP_H_
 

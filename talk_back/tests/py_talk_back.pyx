@@ -3,6 +3,7 @@
 include "py_usart.pyx"
 include "py_interrupt.pyx"
 
+from ctalk_back cimport int8_t, uint8_t
 cimport ctalk_back
 
 
@@ -10,16 +11,9 @@ def toggle_tranceiver(choice):
     ctalk_back.toggle_tranceiver(choice)
 
 
-def get_cmd(partial_str=None):
+def get_cmd():
     cdef int count
-    cdef char cmd[64]
-    cdef char *partial
-
-    ## insert partial into beginning of output buffer
-    if partial_str:
-        partial = partial_str
-        for i in range(len(partial_str)):
-            cmd[i] = partial[i]
+    cdef uint8_t cmd[64]
 
     count = ctalk_back.get_cmd(cmd)
     return count, cmd
@@ -31,6 +25,13 @@ def talk_back():
 
 def isr_PCINT2_vect():
     return ctalk_back.isr_PCINT2_vect()
+
+
+def UCSR0A(value=None):
+    if value:
+        ctalk_back.UCSR0A = value
+    else:
+        return ctalk_back.UCSR0A
 
 
 def UCSR0B(value=None):
@@ -52,13 +53,6 @@ def TXEN0(value=None):
         ctalk_back.TXEN0 = value
     else:
         return ctalk_back.TXEN0
-
-
-def UCSR0A(value=None):
-    if value:
-        ctalk_back.UCSR0A = value
-    else:
-        return ctalk_back.UCSR0A
 
 
 def UDRE0(value=None):

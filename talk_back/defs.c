@@ -1,5 +1,5 @@
 
 #include "defs.h"
 
-unsigned char FLAG = 0;
+uint8_t FLAG = 0;
 

@@ -8,7 +8,7 @@
 #include "defs.h"
 #include "talk_back.h"
 
-extern unsigned char FLAG;
+extern uint8_t FLAG;
 
 void init_interrupt(void);
 void toggle_interrupt(toggle_t choice);

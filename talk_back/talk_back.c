@@ -8,47 +8,41 @@
 
 
 // TODO: turn this into a cython function
-unsigned char test_usart_gets(char *cmd) {
-    char len, *msg, SPLIT_CHAR = '|';
-    static char n = 0, *msg1, *msg2, reset = true;
+int8_t test_usart_gets(char *cmd) {
+    char *msg, SPLIT_CHAR = '|';
+    uint8_t reset = true;
+    static char *msg2;
+    static uint8_t n = 0;
+
+    msg = cmd;
 
     // both strings have been written at once, with a separator the string
     // will be consumed in two goes to test continuation in get_cmd()
     if(n == 0) {
-        len = usart_gets(cmd);
-        msg1 = cmd;
+        usart_gets(cmd);
         msg2 = strchr(cmd, SPLIT_CHAR);
         if(msg2) {
             *msg2 = '\0';
-            *msg2++;
+            msg2++;
             // expecting a split message so don't reset counter
             reset = false;
         }
-    }
+    } else if(n == 1)
+        // second time here, simulate second string being received
+        msg = msg2;
 
-	n++;
-
-    if(n == 2) {
-        // following doesn't seem to work
-        // msg = (n == 1) ? msg1 : msg 2;
-        if(n == 1)
-            msg = msg1;
-        else {
-            msg = msg2;
-        }
-    } else
-        msg = msg1;
-
+    // should have had full command reset markers for next command
     if(reset == true) {
         n = 0;
-        msg1 = msg2 = NULL;
-    }
+        msg2 = NULL;
+    } else
+        n++;
 
 #ifdef _WIN32
 	strncpy(cmd, msg, strlen(msg)+1);
 	return strlen(msg);
 #else
-	return (unsigned char)strlcpy(cmd, msg, strlen(msg)+1);
+	return (int8_t)strlcpy(cmd, msg, strlen(msg)+1);
 #endif
 }
 
@@ -57,10 +51,10 @@ void toggle_tranceiver(toggle_t choice) {
     _toggle(&UCSR0B, _BV(RXEN0) | _BV(TXEN0), choice);
 }
 
-unsigned char get_cmd(char *cmd) {
+uint8_t get_cmd(char *cmd) {
     // get cmd (between START_CMD and END_CMD) from input string
     char *start_ptr = 0, *end_ptr = 0;
-    unsigned char len, processed_len = 0;
+    uint8_t len, processed_len = 0;
 
     // loop until
     while(FLAG & _BV(WAITING_INPUT)) {
@@ -90,7 +84,7 @@ unsigned char get_cmd(char *cmd) {
                 assert(processed_len == strnlen(cmd, sizeof(cmd)));
                 assert(processed_len == end_ptr - start_ptr + 1);
 
-                return (unsigned char)((end_ptr - start_ptr) - 1);
+                return (uint8_t)((end_ptr - start_ptr) - 1);
 
             } else {
                 // keep track of how much command so far
@@ -113,7 +107,7 @@ static void prepare_sleep(void) {
     toggle_interrupt(ON);
 
     PORTC = 255;
-    _delay_ms((char)500);
+    _delay_ms(500);
 
     PORTC = 0;
 
@@ -134,17 +128,16 @@ static void prepare_sleep(void) {
 //	3) as 1 and 2, usart to wake, wdt to return to sleep
 
 int talk_back(void) {
-    unsigned char len = 0;
+    uint8_t len = 0;
     char cmd[64], *cptr;
 
     while(true) {
-        printf("cmd: \n" );
 
-        memset(cmd, 0, sizeof(cmd)/sizeof(cmd[0]));
+        memset(cmd, 0, sizeof(cmd));
         prepare_sleep();
 
         PORTC ^= 2;
-        _delay_ms((char)500);
+        _delay_ms(500);
 
         len = get_cmd(cmd);
 
@@ -157,13 +150,14 @@ int talk_back(void) {
             while(*cptr)
                 usart_putc(*cptr++);
 
-        printf(": \n" );
             while(!uart_tx_empty())
                 ;
 
             // exit - needed to prevent tests spinning
             if(! strncmp(cmd, EXIT, 4))
+            {
                 return 1;
+            }
         }
     }
     return 0;

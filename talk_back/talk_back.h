@@ -23,10 +23,10 @@
 
 #define EXIT "exit"
 
-extern unsigned char FLAG;
+extern uint8_t FLAG;
 
 void toggle_tranceiver(toggle_t choice);
-unsigned char get_cmd(char *cmd);
+uint8_t get_cmd(char *cmd);
 int talk_back(void);
 
 #endif //TALK_BACK_H_

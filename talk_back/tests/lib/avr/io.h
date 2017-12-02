@@ -2,50 +2,52 @@
 #ifndef IO_
 #define IO_
 
-extern unsigned char INT0;
+#include<stdint.h>
 
-extern unsigned char DDRC;
-extern unsigned char ADCSRA;
-extern unsigned char EIFR;
+extern uint8_t INT0;
 
-extern unsigned char INTF0;
-extern unsigned char INTF1;
+extern uint8_t DDRC;
+extern uint8_t ADCSRA;
+extern uint8_t EIFR;
 
-extern unsigned char TXEN0;
-extern unsigned char RXEN0;
+extern uint8_t INTF0;
+extern uint8_t INTF1;
 
-extern unsigned char PCICR;
-extern unsigned char PCIE2;
-extern unsigned char PCIF2;
-extern unsigned char PCINT16;
-extern unsigned char PCMSK2;
+extern uint8_t TXEN0;
+extern uint8_t RXEN0;
 
-extern unsigned char PORTC;
+extern uint8_t PCICR;
+extern uint8_t PCIE2;
+extern uint8_t PCIF2;
+extern uint8_t PCINT16;
+extern uint8_t PCMSK2;
 
-extern unsigned char UBRR0H;
-extern unsigned char UBRR0L;
-extern unsigned char RXCIE0;
-extern unsigned char UCSR0B;
-extern unsigned char UDRIE0;
-extern unsigned char RXC0;
-extern unsigned char UCSR0A;
-extern unsigned char UDRE0;
-extern unsigned char UDR0;
+extern uint8_t PORTC;
 
-extern unsigned char TCCR1B;
-extern unsigned char CS10;
-extern unsigned char CS12;
-extern unsigned char WGM12;
-extern unsigned char OCR1A;
-extern unsigned char TIMSK1;
-extern unsigned char OCIE1B;
+extern uint8_t UBRR0H;
+extern uint8_t UBRR0L;
+extern uint8_t UCSR0A;
+extern uint8_t UCSR0B;
+extern uint8_t UDRIE0;
+extern uint8_t RXC0;
+extern uint8_t RXCIE0;
+extern uint8_t UDRE0;
+extern uint8_t UDR0;
 
-extern unsigned char MCUSR;
-extern unsigned char WDTCSR;
-extern unsigned char WDIE;
-extern unsigned char WDE;
-extern unsigned char WDP3;
-extern unsigned char WDP0;
+extern uint8_t TCCR1B;
+extern uint8_t CS10;
+extern uint8_t CS12;
+extern uint8_t WGM12;
+extern uint8_t OCR1A;
+extern uint8_t TIMSK1;
+extern uint8_t OCIE1B;
+
+extern uint8_t MCUSR;
+extern uint8_t WDTCSR;
+extern uint8_t WDIE;
+extern uint8_t WDE;
+extern uint8_t WDP3;
+extern uint8_t WDP0;
 
 #endif //IO_
 

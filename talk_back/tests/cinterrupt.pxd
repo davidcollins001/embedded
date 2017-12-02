@@ -1,4 +1,6 @@
 
+ctypedef unsigned char uint8_t
+
 cdef extern from "../interrupt.h":
     ctypedef enum toggle_t:
         ON
@@ -7,6 +9,6 @@ cdef extern from "../interrupt.h":
 
 
 cdef extern from "lib/avr/io.h":
-    unsigned char PCICR
-    unsigned char PCIE2
+    uint8_t PCICR
+    uint8_t PCIE2
 

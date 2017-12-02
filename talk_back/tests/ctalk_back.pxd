@@ -1,20 +1,23 @@
 
+ctypedef signed char int8_t
+ctypedef unsigned char uint8_t
+
 cdef extern from "../talk_back.h":
     ctypedef enum toggle_t:
         ON
         OFF
-    unsigned char get_cmd(char *cmd)
+    uint8_t get_cmd(char *cmd)
     void toggle_tranceiver(toggle_t choice)
     int talk_back()
-    unsigned char FLAG
+    uint8_t FLAG
 
 
 cdef extern from "lib/avr/io.h":
-    unsigned char UCSR0B
-    unsigned char RXEN0
-    unsigned char TXEN0
-    unsigned char UDRE0
-    unsigned char UCSR0A
+    uint8_t UCSR0B
+    uint8_t RXEN0
+    uint8_t TXEN0
+    uint8_t UDRE0
+    uint8_t UCSR0A
 
 
 cdef extern from "../interrupt.h":

@@ -2,7 +2,7 @@
 #include "sleep.h"
 
 
-void sleep_now(unsigned char mode) {
+void sleep_now(uint8_t mode) {
     set_sleep_mode(mode);
 
     // power down services

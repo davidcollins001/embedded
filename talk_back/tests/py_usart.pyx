@@ -1,4 +1,5 @@
 
+from cusart cimport uint8_t
 cimport cusart
 
 
@@ -14,14 +15,19 @@ def usart_gets():
 
 
 def isr_USART_UDRE_vect():
-    ## can only get the last letter unless separate thread is used
 
     ## ensure in state to write
     cusart.UCSR0B = 1
     cusart.UDRIE0 = 1
 
-    cusart.isr_USART_UDRE_vect()
-    return chr(cusart.UDR0)
+    data = []
+    while cusart.UCSR0B:
+        cusart.isr_USART_UDRE_vect()
+        data.append(cusart.UDR0)
+
+    ## convert ascii code to char
+    data = ''.join(chr(r) for r in data)
+    return data
 
 
 def isr_USART_RX_vect(data):

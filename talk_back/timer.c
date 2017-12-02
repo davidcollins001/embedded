@@ -30,14 +30,14 @@ void wdt_enable_int(void) {
     // set WDT to interrupt mode, not reset
     cli();
     // enable the WD change bit
-    WDTCSR = (unsigned char)(_BV(WDCE) | _BV(WDE));
+    WDTCSR = (uint8_t)(_BV(WDCE) | _BV(WDE));
     // enable WDT interrupt and set to 8s
-    //WDTCSR = (unsigned char)(_BV(WDIE) | WDTO_8S);
-    WDTCSR = (unsigned char)(_BV(WDIE) | _BV(WDP3) | _BV(WDP0));
+    //WDTCSR = (uint8_t)(_BV(WDIE) | WDTO_8S);
+    WDTCSR = (uint8_t)(_BV(WDIE) | _BV(WDP3) | _BV(WDP0));
     sei();
 }
 
-void init_timer_1(unsigned char rate) {
+void init_timer_1(uint8_t rate) {
     // setup pin interrupt
     //EIMSK |= _BV(INT0);
     // EICRA |= _BV(ISC00) | _BV(ISC01);

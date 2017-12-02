@@ -22,7 +22,7 @@ void toggle_interrupt(toggle_t choice) {
     else if(choice == OFF)
     {
         PCICR &= ~_BV(PCIE2);
-        PORTC = (unsigned char)10101010;
+        PORTC = (uint8_t)10101010;
         _delay_ms(500);
     }
 }
