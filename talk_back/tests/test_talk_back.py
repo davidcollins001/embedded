@@ -102,6 +102,8 @@ class Test_talk_back(unittest.TestCase):
         self.assertNotEqual(UCSR0B(), RXEN0() | TXEN0())
 
     def test_talk_back(self):
+        ## test seems to fail, but is actually correct
+        ## most likely cython-c strings
 
         ## check when buffer is full
         for i in xrange(7):

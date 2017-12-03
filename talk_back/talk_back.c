@@ -1,8 +1,6 @@
 
 #include "talk_back.h"
 
-#include<util/delay.h>
-
 // check flag to see if woken up
 // https://arduino.stackexchange.com/questions/13167/put-atmega328-in-very-deep-sleep-and-listen-to-serial
 

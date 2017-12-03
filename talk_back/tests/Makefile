@@ -1,16 +1,16 @@
 
 CYTHON_ARGS := --inplace
-ifeq ($(OS),Windows_NT)
+ifeq ($(OS), Windows_NT)
 	PYTHON := python
 	CYTHON_ARGS += --compiler=msvc
 else
 	PYTHON := python2
 endif
 
-LIBS := $(patsubst %.pyx,%.so,$(wildcard *.pyx))
+LIBS := $(patsubst %.pyx, %.so, $(wildcard *.pyx))
 SOURCES = $(wildcard *.pyx) $(wildcard ../*.c)
 TESTS := $(wildcard test*.py)
-OBJS := $(patsubst %.py,%.c, $(wildcard test*.py))
+OBJS := $(patsubst %.py, %.c,  $(wildcard test*.py))
 
 
 # all-test:

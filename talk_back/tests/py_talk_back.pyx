@@ -16,7 +16,7 @@ def get_cmd():
     cdef char cmd[64]
 
     count = ctalk_back.get_cmd(cmd)
-    return count, cmd
+    return count, cmd[:count]
 
 
 def talk_back():

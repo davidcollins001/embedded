@@ -6,6 +6,7 @@ cdef extern from "../talk_back.h":
     ctypedef enum toggle_t:
         ON
         OFF
+
     uint8_t get_cmd(char *cmd)
     void toggle_tranceiver(toggle_t choice)
     int talk_back()
