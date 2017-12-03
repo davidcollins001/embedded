@@ -1,23 +1,42 @@
-GCCFLAGS=-g -Os -Wall -mmcu=atmega168 
+
+## must use gmake
+
+CC=avr-gcc
+OBJCOPY=avr-objcopy
+OBJDUMP=avr-objdump
+CFLAGS=-g -Os -Wall -mmcu=atmega168
 LINKFLAGS=-Wl,-u,vfprintf -lprintf_flt -Wl,-u,vfscanf -lscanf_flt -lm
+AVRDUDE=avrdude
 AVRDUDEFLAGS=-u -c avr109 -p m168 -b 115200 -P /dev/cuaU0
-LINKOBJECTS=../libnerdkits/delay.o ../libnerdkits/lcd.o ../libnerdkits/uart.o
 
-all:	flash.hex
+SOURCES=$(wildcard *.c)
+OBJECTS=$(SOURCES:.c=.o)
+TESTS_DIR=tests
 
-flash.hex:	flash.c
-	make -C ../libnerdkits
-	avr-gcc ${GCCFLAGS} ${LINKFLAGS} -o flash.o flash.c ${LINKOBJECTS}
-	avr-objcopy -j .text -j .data -O ihex flash.o flash.hex
+TARGET=flash
 
-flash.ass:	flash.hex
-	avr-objdump -S -d flash.o > flash.ass
-	
-burn: flash-upload
-flash-upload:	flash.hex
-	avrdude ${AVRDUDEFLAGS} -U flash:w:flash.hex:a
+all:	$(TARGET).hex
 
-.PHONY: clean
+%.o: %.c
+	@echo $(SOURCES)
+	$(CC) ${LINKFLAGS} $(CFLAGS) -c $<
+
+$(TARGET).hex:	$(OBJECTS)
+	$(CC) ${LINKFLAGS} $(CFLAGS) -o $(TARGET).elf $^
+	$(OBJCOPY) -j .text -j .data -O ihex $(TARGET).elf $(TARGET).hex
+
+$(TARGET).ass:	$(TARGET).hex
+	$(OBJDUMP) -S -d $@ > $<
+
+burn: $(TARGET)-upload
+$(TARGET)-upload:	$(TARGET).hex
+	$(AVRDUDE) ${AVRDUDEFLAGS} -U flash:w:$(TARGET).hex:a
+
+.PHONY: clean tests
 clean:
-	rm -rf flash.hex flash.o
+	rm -rf $(OBJECTS) $(TARGET).elf $(TARGET).hex $(TARGET).ass
+	$(MAKE) -C $(TESTS_DIR) clean
+
+tests:
+	$(MAKE) -C $(TESTS_DIR) tests
 

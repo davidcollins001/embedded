@@ -1,23 +1,19 @@
 
 #include "flash.h"
+#include "../talk_back/usart.h"
+#include "../talk_back/sleep.h"
 
 const volatile char* usart_str;
 
 void setup_port(void) {
     // setup pin direction
-    DDRC = 0xFF; 
+    DDRC = 0xFF;
     PORTC = 0;
     ADCSRA = 0;
 
     // set portb2 as input
     DDRB &= ~_BV(PB1);
     PINB = 0;
-}
-
-void setup_usart(void) {
-    UBRR0H = (BAUDRATE >> 8);
-    UBRR0L = BAUDRATE;
-    UCSR0B |= _BV(TXEN0);
 }
 
 void setup_timer(void) {
@@ -27,7 +23,7 @@ void setup_timer(void) {
 
     // setup timer interrupt with 1024 prescale
     TCCR1B |= _BV(CS10) | _BV(CS12);
- 
+
     // setup clear on compare match
     TCCR1B |= _BV(WGM12);
     // set timer compare value
@@ -35,87 +31,23 @@ void setup_timer(void) {
 
     // enable timer interrupt
     TIMSK1 |= _BV(OCIE1B);
-    
+
     // clear any existing interrupts
     EIFR = _BV(INTF0) | _BV(INTF1);
 }
 
 void init(void) {
     setup_port();
-    setup_usart();
+    init_usart(false);
     setup_timer();
 
     FLAG_VECT = 0;
     sei();
 }
 
-void sleep_now(void) {
-    set_sleep_mode(SLEEP_MODE_IDLE);
-
-    sleep_enable();
-    sleep_mode();
-
-    // just woken up, yawn
-    sleep_disable(); 
-}
-
-unsigned char rawKeyPressed() {
-    return EICRA;
-}
-
-unsigned char debounceSwtich() {
-    static uint16_t state = 0;
-    state = (state<<1) | !rawKeyPressed() | 0xe000;
-    if(state == 0xf000)
-        return True;
-    return False;
-}
-
-unsigned char usart_getc(void) {
-    while(!(UCSR0A & _BV(UDRE0)))
-        ;
-    return UDR0; 
-}
-
-void usart_puts(const char *data) {
-    usart_str = data;
-    UCSR0B |= _BV(UDRIE0);
-}
-
-// disable INT0 interrput
-//NO_ISR(INT0_vect) {
-//    char int0[10];
-//    usart_puts(PSTR("INT0_vect\t"));
-//    utoa(EICRA, int0, 1);
-//    usart_puts(int0);
-//    usart_puts(PSTR("\n"));
-//
-//    // de-bounce switch
-//    // http://www.ganssle.com/debouncing-pt2.htm
-//
-//    // set global variable that flash watches
-//    if(debounceSwtich())
-//        FLAG_VECT |= _BV(int_FLASH);
-//}
-
 ISR(TIMER1_COMPB_vect) {
     usart_puts(PSTR("TIMER1_COMPB_vect\n"));
     FLAG_VECT |= _BV(int_TIMER1_COMPB);
-}
-
-ISR(USART_UDRE_vect) {
-    //FLAG_VECT |= _BV(int_NEXT_BYTE);
-    UDR0 = 'a';//usart_str[0];
-    UCSR0B &= ~_BV(UDRIE0);
-
-    /*
-    UDR0 = *usart_str++;
-
-    if(*usart_str == 0) {
-        //usart_str = 0;
-        UCSR0B &= ~_BV(UDRIE0);
-    }
-    */
 }
 
 void flash(unsigned char set) {
@@ -147,7 +79,7 @@ int main(void) {
 
     init();
 
-    while(True) {
+    while(true) {
         flag_vect = FLAG_VECT;
         pinb = PINB & _BV(PB1);
 
@@ -159,9 +91,7 @@ int main(void) {
         }
 
         // check what interrupt was raised
-        switch(flag_vect) {
-            case _BV(int_TIMER1_COMPB):
-            {
+        if(flag_vect & _BV(int_TIMER1_COMPB)) {
                 // reset timer if that was trigger
                 FLAG_VECT &= ~_BV(int_TIMER1_COMPB);
 
@@ -180,17 +110,9 @@ int main(void) {
                 }
                 else
                     flash_incr();
-
-                break;
-            }
-            default:
-            {
-                // put mcu to sleep
-                sleep_now();
-                break;
-            }
         }
-        sleep_now();
+        // put mcu to sleep
+        sleep_now(SLEEP_MODE_IDLE);
     }
 
     return 0;

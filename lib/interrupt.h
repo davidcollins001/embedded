@@ -6,7 +6,6 @@
 #include <avr/io.h>
 
 #include "defs.h"
-#include "talk_back.h"
 
 extern uint8_t FLAG;
 

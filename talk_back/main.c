@@ -1,6 +1,9 @@
 
 #include <avr/interrupt.h>
 
+#include "usart.h"
+#include "timer.h"
+#include "interrupt.h"
 #include "talk_back.h"
 
 
@@ -10,7 +13,7 @@ static void init(void) {
     PORTC = 0;
     ADCSRA = 0;
 
-    init_usart();
+    init_usart(true);
     init_timer(INT_RATE);
     init_interrupt();
 

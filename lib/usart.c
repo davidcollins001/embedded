@@ -6,13 +6,14 @@
 
 inline static void enable_receiving(void);
 
-void init_usart(void) {
+void init_usart(uint8_t rcv) {
     UBRR0H = (BAUDRATE >> 8);
     UBRR0L = BAUDRATE;
     UCSR0A |= _BV(UDRE0);
     //UCSR0B |= _BV(TXEN0) | _BV(RXEN0);
 
-    enable_receiving();
+    if(rcv)
+        enable_receiving();
 }
 
 inline static void enable_transmission(void) {

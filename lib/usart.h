@@ -28,7 +28,7 @@ typedef struct buffer {
 volatile static buffer_t tx_buffer;
 volatile static buffer_t rx_buffer;
 
-void init_usart(void);
+void init_usart(uint8_t rcv);
 void usart_putc(const char c);
 char usart_getc(void);
 
