@@ -1,7 +1,7 @@
 
 ## include to get all functionality in this extension
-include "../../lib/tests/py_usart.pyx"
-include "../../lib/tests/py_interrupt.pyx"
+include "py_usart.pyx"
+include "py_interrupt.pyx"
 
 from ctalk_back cimport int8_t, uint8_t
 cimport ctalk_back

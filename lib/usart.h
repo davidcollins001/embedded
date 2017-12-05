@@ -34,12 +34,17 @@ char usart_getc(void);
 
 void usart_puts_P(const char *data);
 void usart_puts(const char *data);
-
 uint8_t usart_gets(char *data);
 
 uint8_t uart_tx_empty(void);
 
 volatile buffer_t _buffer_debug(char buf, char debug);
+
+// ISRs get created for tests so add prototypes
+#ifdef TEST
+void isr_USART_UDRE_vect();
+void isr_USART_RX_vect();
+#endif
 
 #endif //USART_H_
 

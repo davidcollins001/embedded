@@ -6,6 +6,6 @@
 *.pyc
 *.core
 build
-tests/py*.c
-tests/*.so
-tests/*.pyd
+py*.c
+*.so
+*.pyd

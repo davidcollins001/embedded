@@ -30,7 +30,7 @@ class Test_talk_back(unittest.TestCase):
     def setUp(self):
         FLAG(1)
 
-    def NO_test_get_cmd(self):
+    def test_get_cmd(self):
         ## check when buffer is full
         for _ in xrange(7):
             for msg in ["send str", "exit"]:
@@ -42,7 +42,7 @@ class Test_talk_back(unittest.TestCase):
                 self.assertEqual(l, endx - sndx - 1)
                 self.assertEqual(cmd[:l], data[sndx + 1: endx])
 
-    def NO_test_char_cmd(self):
+    def test_char_cmd(self):
         ## cbeck when buffer is full
         data = "missed command.>S.junk"
         isr_USART_RX_vect(data)
@@ -52,7 +52,7 @@ class Test_talk_back(unittest.TestCase):
         self.assertEqual(l, endx - sndx - 1)
         self.assertEqual(cmd[:l], data[sndx + 1: endx])
 
-    def NO_test_partial_cmd(self):
+    def test_partial_cmd(self):
         ## TODO: mock usart_gets to return data1 first then data2
 
         ## check when command is read partially multiple times
@@ -78,7 +78,7 @@ class Test_talk_back(unittest.TestCase):
         self.assertEqual(l2, len(full_cmd))
         self.assertEqual(cmd[:l2], full_cmd)
 
-    def NO_test_empty_cmd(self):
+    def test_empty_cmd(self):
         ## cbeck when buffer is full
         data = "missed command.>.junk"
         isr_USART_RX_vect(data)
@@ -88,7 +88,7 @@ class Test_talk_back(unittest.TestCase):
         self.assertEqual(l, endx - sndx - 1)
         self.assertEqual(cmd[:l], data[sndx + 1: endx])
 
-    def NO_test_toggle_tranceiver(self):
+    def test_toggle_tranceiver(self):
         ## set PCIE2 which is used to set register
         UCSR0B(value=0)
 

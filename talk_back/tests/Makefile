@@ -26,5 +26,5 @@ $(LIBS): $(SOURCES) #clean
 .PHONY: clean libs
 clean:
 	@echo sources - $(SOURCES)
-	rm -rf build *.so *.c
+	rm -rf build lib *.so *.c
 
