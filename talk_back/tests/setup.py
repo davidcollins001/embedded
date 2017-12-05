@@ -8,7 +8,7 @@ import os
 import platform
 
 libdir = "../../lib"
-stubdir = "../../lib_stubs"
+stubdir = "../../lib/tests/stubs/include"
 
 if platform.system() == "Windows":
     compile_args = ["/DTEST"]
@@ -32,12 +32,11 @@ def find_lib(path, ext="c"):
 import pdb; pdb.set_trace()
 setup(
     ext_modules=cythonize([
-        Extension("py_talk_back", ["py_talk_back.pyx"] + find_lib("%s/tests" %
-                                                                  libdir,
-                                                                  ext="pyx") +
-                                    find_lib(libdir) + find_lib("..") +
-                                    find_lib("%s/avr" % stubdir) +
-                                    find_lib("%s/util" % stubdir),
+        Extension("py_talk_back", ["py_talk_back.pyx"] +
+                                  find_lib("%s/tests" % libdir, ext="pyx") +
+                                  find_lib(libdir) + find_lib("..") +
+                                  find_lib("%s/avr" % stubdir) +
+                                  find_lib("%s/util" % stubdir),
                   include_dirs=["..", ".", "lib", libdir, stubdir],
                   extra_compile_args=compile_args,
                   extra_link_args=link_args),
