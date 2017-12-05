@@ -15,7 +15,7 @@ cdef extern from "../usart.h":
     buffer_t _buffer_debug(char buf, char debug)
 
 
-cdef extern from "lib/avr/io.h":
+cdef extern from "avr/io.h":
     uint8_t UBRR0H
     uint8_t UBRR0L
     uint8_t RXCIE0

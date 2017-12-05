@@ -8,7 +8,7 @@ cdef extern from "../interrupt.h":
     void toggle_interrupt(toggle_t choice)
 
 
-cdef extern from "lib/avr/io.h":
+cdef extern from "avr/io.h":
     uint8_t PCICR
     uint8_t PCIE2
 

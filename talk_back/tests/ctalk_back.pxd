@@ -2,7 +2,7 @@
 ctypedef signed char int8_t
 ctypedef unsigned char uint8_t
 
-cdef extern from "../talk_back.h":
+cdef extern from "talk_back.h":
     ctypedef enum toggle_t:
         ON
         OFF
@@ -13,7 +13,7 @@ cdef extern from "../talk_back.h":
     uint8_t FLAG
 
 
-cdef extern from "lib/avr/io.h":
+cdef extern from "avr/io.h":
     uint8_t UCSR0B
     uint8_t RXEN0
     uint8_t TXEN0
@@ -21,6 +21,6 @@ cdef extern from "lib/avr/io.h":
     uint8_t UCSR0A
 
 
-cdef extern from "../interrupt.h":
+cdef extern from "interrupt.h":
     void isr_PCINT2_vect()
 

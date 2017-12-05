@@ -38,7 +38,7 @@ int8_t test_usart_gets(char *cmd) {
 
 #ifdef _WIN32
 	strncpy(cmd, msg, strlen(msg)+1);
-	return strlen(msg);
+	return (int8_t)strlen(msg);
 #else
 	return (int8_t)strlcpy(cmd, msg, strlen(msg)+1);
 #endif
@@ -74,8 +74,8 @@ uint8_t get_cmd(char *cmd) {
 #ifdef _WIN32
                     strncpy(cmd, start_ptr + 1, end_ptr - start_ptr - 1);
                     // ensure command string is null terminated
-                    *(cmd + (end_ptr - start_ptr) + 1) = '\0';
-                    len = strlen(msg);
+                    *(cmd + (end_ptr - start_ptr) - 1) = '\0';
+                    len = strlen(cmd);
 #else
                     len = strlcpy(cmd, start_ptr + 1, end_ptr - start_ptr + 1);
 #endif
