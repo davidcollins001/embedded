@@ -55,7 +55,7 @@ uint8_t get_cmd(char *cmd) {
     uint8_t len, processed_len = 0;
 
     // loop until watchdog expires
-    while(FLAG & _BV(WAITING_INPUT)) {
+    while(FLAG_VECT & _BV(WAITING_INPUT)) {
 
 #ifndef TEST
         len = usart_gets(cmd + processed_len);
@@ -75,13 +75,13 @@ uint8_t get_cmd(char *cmd) {
                     strncpy(cmd, start_ptr + 1, end_ptr - start_ptr - 1);
                     // ensure command string is null terminated
                     *(cmd + (end_ptr - start_ptr) - 1) = '\0';
-                    len = strlen(cmd);
+                    len = (uint8_t)strlen(cmd);
 #else
                     len = strlcpy(cmd, start_ptr + 1, end_ptr - start_ptr + 1);
 #endif
                     // assert((end_ptr - start_ptr) - 1 == strnlen(cmd, len));
 
-                    return ((end_ptr - start_ptr) - 1);
+                    return (uint8_t)((end_ptr - start_ptr) - 1);
 
                 } else {
                     // keep track of how much command so far

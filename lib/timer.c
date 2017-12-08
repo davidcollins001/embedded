@@ -12,7 +12,7 @@ ISR(TIMER1_COMPB_vect) {
 
 ISR(WDT_vect) {
     // unset waiting flag to go back to sleep
-    FLAG &= ~_BV(WAITING_INPUT);
+    FLAG_VECT &= ~_BV(WAITING_INPUT);
     wdt_reset();
 }
 
@@ -29,10 +29,6 @@ void wdt_enable_int(void) {
 }
 
 void init_timer_1(uint8_t rate) {
-    // setup pin interrupt
-    //EIMSK |= _BV(INT0);
-    // EICRA |= _BV(ISC00) | _BV(ISC01);
-
     // setup timer interrupt with 1024 prescale
     TCCR1B |= _BV(CS10) | _BV(CS12);
 

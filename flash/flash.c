@@ -1,9 +1,13 @@
 
+#include <usart.h>
+#include <sleep.h>
+#include <timer.h>
+
 #include "flash.h"
 
 const volatile char* usart_str;
 
-void setup_port(void) {
+static void setup_port(void) {
     // setup pin direction
     DDRC = 0xFF;
     PORTC = 0;
@@ -14,41 +18,20 @@ void setup_port(void) {
     PINB = 0;
 }
 
-void setup_timer(void) {
-    // setup pin interrupt
-    //EIMSK |= _BV(INT0);
-    EICRA |= _BV(ISC00) | _BV(ISC01);
-
-    // setup timer interrupt with 1024 prescale
-    TCCR1B |= _BV(CS10) | _BV(CS12);
-
-    // setup clear on compare match
-    TCCR1B |= _BV(WGM12);
-    // set timer compare value
-    OCR1A = INT_RATE;
-
-    // enable timer interrupt
-    TIMSK1 |= _BV(OCIE1B);
+static void init(void) {
+    setup_port();
+    init_usart(false);
+    init_interupt(0);
+    init_timer(RATE);
 
     // clear any existing interrupts
     EIFR = _BV(INTF0) | _BV(INTF1);
-}
-
-void init(void) {
-    setup_port();
-    init_usart(false);
-    setup_timer();
 
     FLAG_VECT = 0;
     sei();
 }
 
-ISR(TIMER1_COMPB_vect) {
-    usart_puts(PSTR("TIMER1_COMPB_vect\n"));
-    FLAG_VECT |= _BV(int_TIMER1_COMPB);
-}
-
-void flash(unsigned char set) {
+void flash(uint8_t set) {
     unsigned char i;
     usart_puts(PSTR("flash\n"));
 
@@ -69,11 +52,8 @@ void flash_incr(void) {
 }
 
 
-int main(void) {
-    unsigned char count = 0;
-    unsigned char flag_vect;
-    unsigned char set = 0;
-    unsigned char pinb = 0, portc = 0;
+void runner(void) {
+    uint8_t count = 0, flag_vect, set = 0, pinb = 0, portc = 0;
 
     init();
 
@@ -112,7 +92,9 @@ int main(void) {
         // put mcu to sleep
         sleep_now(SLEEP_MODE_IDLE);
     }
+}
 
-    return 0;
+int main(void) {
+    runner();
 }
 

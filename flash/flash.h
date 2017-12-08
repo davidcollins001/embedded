@@ -11,26 +11,23 @@
 #include <embed/usart.h>
 #include <embed/sleep.h>
 
+#include "defs.h"
+
 #define FLASHES 5
 #define BAUD  9600
 #define BAUDRATE ((F_CPU)/(BAUD*16UL)-1)
 
 #define int_FLASH 0x1
-#define int_TIMER1_COMPB 0x2
 #define int_NEXT_BYTE 0X3
 
-// TODO: make usart interrupt
+#define RATE 4099
 
 // flag to indicate interrupt has ocurred
-volatile unsigned char FLAG_VECT = 0;
+// volatile uint8_t FLAG_VECT = 0;
 
-void setup_port(void);
-void setup_timer(void);
-
-void init(void);
-
-void flash(unsigned char set);
+void flash(uint8_t set);
 void flash_incr(void);
+void runner(void);
 
 #endif //__flash_h__
 

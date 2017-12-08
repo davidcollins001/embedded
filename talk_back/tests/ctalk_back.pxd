@@ -10,7 +10,7 @@ cdef extern from "talk_back.h":
     uint8_t get_cmd(char *cmd)
     void toggle_tranceiver(toggle_t choice)
     int talk_back()
-    uint8_t FLAG
+    uint8_t FLAG_VECT
 
 
 cdef extern from "embed/interrupt.h":

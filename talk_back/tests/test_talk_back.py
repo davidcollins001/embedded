@@ -3,7 +3,7 @@ import unittest
 from py_talk_back import (
     toggle_tranceiver, get_cmd, talk_back, isr_USART_RX_vect,
     isr_USART_UDRE_vect, isr_PCINT2_vect, UCSR0B, RXEN0, TXEN0, UDRE0,  UCSR0A,
-    FLAG
+    FLAG_VECT
 )
 
 RX, TX = 0, 1
@@ -28,7 +28,7 @@ def usart_gets(cmd):
 class Test_talk_back(unittest.TestCase):
 
     def setUp(self):
-        FLAG(1)
+        FLAG_VECT(1)
 
     def test_get_cmd(self):
         ## check when buffer is full

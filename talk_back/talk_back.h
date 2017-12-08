@@ -22,7 +22,7 @@
 
 #define EXIT "__exit__"
 
-extern uint8_t FLAG;
+extern uint8_t FLAG_VECT;
 
 void toggle_tranceiver(toggle_t choice);
 uint8_t get_cmd(char *cmd);

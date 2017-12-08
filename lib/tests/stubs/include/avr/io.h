@@ -49,5 +49,10 @@ extern uint8_t WDE;
 extern uint8_t WDP3;
 extern uint8_t WDP0;
 
+extern uint8_t EIMSK;
+extern uint8_t EICRA;
+extern uint8_t ISC00;
+extern uint8_t ISC01;
+
 #endif //IO_
 

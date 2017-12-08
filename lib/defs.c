@@ -1,5 +1,5 @@
 
 #include <embed/defs.h>
 
-uint8_t FLAG = 0;
+volatile uint8_t FLAG_VECT = 0;
 

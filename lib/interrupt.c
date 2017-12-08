@@ -3,14 +3,24 @@
 
 
 ISR(PCINT2_vect) {
-    FLAG |= _BV(WAITING_INPUT);
+    FLAG_VECT |= _BV(WAITING_INPUT);
 }
 
-void init_interrupt(void) {
-    // trigger interrupt on any logical change (rising or falling edge)
-    PCICR |= _BV(PCIE2);
-    PCICR |= _BV(PCIF2);
-    PCMSK2 |= _BV(PCINT16);
+ISR(TIMER1_COMPB_vect) {
+    FLAG_VECT |= _BV(int_TIMER1_COMPB);
+}
+
+void init_interrupt(uint8_t type) {
+    if(type == 0) {
+    // setup pin interrupt
+    EIMSK |= _BV(INT0);
+    EICRA |= _BV(ISC00) | _BV(ISC01);
+    } else if(type == 1) {
+        // trigger interrupt on any logical change (rising or falling edge)
+        PCICR |= _BV(PCIE2);
+        PCICR |= _BV(PCIF2);
+        PCMSK2 |= _BV(PCINT16);
+    }
 }
 
 void toggle_interrupt(toggle_t choice) {

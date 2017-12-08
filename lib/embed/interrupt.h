@@ -7,9 +7,9 @@
 
 #include "defs.h"
 
-extern uint8_t FLAG;
+extern uint8_t FLAG_VECT;
 
-void init_interrupt(void);
+void init_interrupt(uint8_t type);
 void toggle_interrupt(toggle_t choice);
 
 // ISRs get created for tests so add prototypes

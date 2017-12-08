@@ -12,6 +12,7 @@ AVRDUDEFLAGS=-u -c avr109 -p m168 -b 115200 -P /dev/cuaU0
 
 SOURCES=$(wildcard *.c)
 OBJECTS=$(SOURCES:.c=.o)
+# LIB_OBJECTS=$(wildcard $(LIB_DIR)/*.c)
 LIB_OBJECTS=$(wildcard ../lib/*.c)
 TESTS_DIR=tests
 

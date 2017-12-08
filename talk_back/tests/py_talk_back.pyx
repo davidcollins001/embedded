@@ -62,9 +62,9 @@ def UDRE0(value=None):
         return ctalk_back.UDRE0
 
 
-def FLAG(value=None):
+def FLAG_VECT(value=None):
     if value:
-        ctalk_back.FLAG = value
+        ctalk_back.FLAG_VECT = value
     else:
-        return ctalk_back.FLAG
+        return ctalk_back.FLAG_VECT
 

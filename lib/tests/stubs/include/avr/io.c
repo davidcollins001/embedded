@@ -46,3 +46,8 @@ uint8_t WDE = 0x1;
 uint8_t WDP3 = 0x1;
 uint8_t WDP0 = 0x1;
 
+uint8_t EIMSK = 0x1;
+uint8_t EICRA = 0x0;
+uint8_t ISC00 = 0x1;
+uint8_t ISC01 = 0x2;
+                                                                                                                e
