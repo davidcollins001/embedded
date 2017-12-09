@@ -1,5 +1,5 @@
 
-#include "sleep.h"
+#include <embed/sleep.h>
 
 
 void sleep_now(uint8_t mode) {

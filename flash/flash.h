@@ -2,15 +2,14 @@
 #ifndef __flash_h__
 #define __flash_h__
 
-#include <avr/io.h>
-#include <inttypes.h>
-#include <avr/interrupt.h>
-#include <avr/sleep.h>
-#include <avr/power.h>
-#include <avr/io.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <avr/pgmspace.h>
+#include <inttypes.h>
+
+#include <avr/io.h>
+
+#include <embed/usart.h>
+#include <embed/sleep.h>
 
 #define FLASHES 5
 #define BAUD  9600

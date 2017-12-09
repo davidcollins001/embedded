@@ -7,7 +7,7 @@ from Cython.Build import cythonize
 import os
 import platform
 
-stubdir = "stubs/include"
+STUBDIR = "stubs/include"
 
 if platform.system() == "Windows":
     compile_args = ["/DTEST"]
@@ -33,14 +33,14 @@ setup(
         Extension("py_usart", ["../usart.c", "py_usart.pyx"] +
                               find_lib("stubs/include/avr") +
                               find_lib("stubs/include/util"),
-                  include_dirs=[stubdir],
+                  include_dirs=["../", STUBDIR],
                   extra_compile_args=compile_args,
                   extra_link_args=link_args),
          Extension("py_interrupt", ["../interrupt.c", "py_interrupt.pyx",
                                     "../defs.c"] +
                               find_lib("stubs/include/avr") +
                               find_lib("stubs/include/util"),
-                  include_dirs=[stubdir],
+                  include_dirs=["../", STUBDIR],
                   extra_compile_args=compile_args,
                   extra_link_args=link_args),
 

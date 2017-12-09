@@ -1,7 +1,5 @@
 
 #include "flash.h"
-#include "../talk_back/usart.h"
-#include "../talk_back/sleep.h"
 
 const volatile char* usart_str;
 

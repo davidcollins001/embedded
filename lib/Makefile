@@ -4,7 +4,7 @@
 CC=avr-gcc
 OBJCOPY=avr-objcopy
 OBJDUMP=avr-objdump
-CFLAGS=-g -Os -Wall -mmcu=atmega168
+CFLAGS=-g -Os -Wall -mmcu=atmega168 -I.
 
 SOURCES=$(wildcard *.c)
 OBJECTS=$(SOURCES:.c=.o)

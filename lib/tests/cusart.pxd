@@ -1,7 +1,7 @@
 
 ctypedef unsigned char uint8_t
 
-cdef extern from "usart.h":
+cdef extern from "embed/usart.h":
     void usart_puts(const char *data)
     int usart_gets(char *data)
 

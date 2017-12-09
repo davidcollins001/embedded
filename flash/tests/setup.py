@@ -36,14 +36,14 @@ def find_lib(path, ext="c", recurse=False):
     return files
 
 
-sources = ["py_talk_back.pyx"] + (
+sources = ["py_flash.pyx"] + (
     find_lib(LIBDIR) + find_lib("..") + find_lib(STUBDIR, recurse=True)
 )
 
-## build one lib - requires py_talk_back.pyx 'include'ing py_usart.pyx
+## build one lib - requires py_flash.pyx 'include'ing py_usart.pyx
 setup(
     ext_modules=cythonize([
-        Extension("py_talk_back",
+        Extension("py_flash",
                   sources,
                   include_dirs=["..", ".", LIBDIR, STUBDIR],
                   extra_compile_args=compile_args,

@@ -2,19 +2,13 @@
 ctypedef signed char int8_t
 ctypedef unsigned char uint8_t
 
-cdef extern from "talk_back.h":
-    ctypedef enum toggle_t:
-        ON
-        OFF
-
-    uint8_t get_cmd(char *cmd)
-    void toggle_tranceiver(toggle_t choice)
-    int talk_back()
-    uint8_t FLAG
+cdef extern from "flash.h":
+    void flash(unsigned char set);
+    void flash_incr();
 
 
 cdef extern from "embed/interrupt.h":
-    void isr_PCINT2_vect()
+    isr_TIMER1_COMPB_vect();
 
 
 cdef extern from "avr/io.h":

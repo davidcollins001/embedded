@@ -42,6 +42,5 @@ clean:
 	$(MAKE) -C $(TESTS_DIR) clean
 
 tests:
-	$(MAKE) -C $(LIB_DIR) tests
 	$(MAKE) -C $(TESTS_DIR) tests
 

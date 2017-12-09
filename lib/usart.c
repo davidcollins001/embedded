@@ -1,7 +1,7 @@
 
 //#define SERIAL_USART
 
-#include "usart.h"
+#include <embed/usart.h>
 
 
 inline static void enable_receiving(void);

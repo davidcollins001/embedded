@@ -11,12 +11,11 @@
 #include <avr/io.h>
 #include <avr/wdt.h>
 
-#include "defs.h"
-
-#include "usart.h"
-#include "timer.h"
-#include "sleep.h"
-#include "interrupt.h"
+#include <embed/defs.h>
+#include <embed/usart.h>
+#include <embed/timer.h>
+#include <embed/sleep.h>
+#include <embed/interrupt.h>
 
 #define START_CMD '>'
 #define END_CMD '.'

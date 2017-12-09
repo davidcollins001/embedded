@@ -1,7 +1,7 @@
 
 ctypedef unsigned char uint8_t
 
-cdef extern from "interrupt.h":
+cdef extern from "embed/interrupt.h":
     ctypedef enum toggle_t:
         ON
         OFF
