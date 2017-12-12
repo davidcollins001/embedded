@@ -12,17 +12,19 @@
 #define MAX_TASKS 5
 #define NULL ( (void *) 0)
 
-typedef volatile uint8_t (*taskfn_t)(void *args);
+typedef void (*taskfn_t)(void);
 
 typedef struct {
+    uint8_t id;
     taskfn_t task_fn;
 } task_t;
 
 task_t task_list[MAX_TASKS+1];
-uint8_t tasks = 0;
+uint8_t tasks_num;
 
 void init_tasks(void);
-void add_task(task_t task);
+void add_task(taskfn_t task);
+void sched(void);
 
 #endif //RTOS_H_
 

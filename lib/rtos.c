@@ -3,66 +3,70 @@
 
 
 void init(void) {
-    uint8_t i;
+    // uint8_t i;
+    tasks_num = 0;
 
-    for(i=MAX_TASKS; i>0; i--)
-        task_list[i] = (task_t)NULL;
+    // for(i=MAX_TASKS; i>0; i--)
+        // task_list[i] = (task_t)NULL;
 
     PORTC = 0;
 }
 
 
-uint8_t idle_task(void *none) {
-    sleep();
+void idle_task(void) {
+    sleep_now(SLEEP_MODE_PWR_DOWN);
 }
 
 
-uint8_t run1(void *none) {
+void run1(void) {
     PORTC ^= 1;
 }
 
 
-uint8_t run2(void *none) {
+void run2(void) {
     PORTC ^= 2;
 }
 
 
-void add_task(task_t task) {
-    if(tasks == 0) {
-        // insert idle/sleep task at end
-        task_t idle = {&idle_task};
-        task_list[MAX_TASKS] = idle;
-        tasks++;
+void add_task(taskfn_t task) {
+
+    // put idle task as first task
+    if(tasks_num == 0) {
+        task_t idle = { 0, idle_task };
+        // *idle.task_fn = &idle_task;
+        task_list[0] = idle;
+        tasks_num++;
     }
-    if(tasks < MAX_TASKS) {
-        task_t idle = {task};
-        tasks++;
+
+    if(tasks_num < MAX_TASKS) {
+        task_t idle = { tasks_num, task};
+        task_list[tasks_num] = idle;
+        tasks_num++;
     }
 }
 
-    //
+void sched(void) {
+    uint8_t i;
+
+    // scheduler - run all processes secuentially
+    for(i=tasks_num; i>0; i--) {
+        task_list[i].task_fn();
+    }
+}
+
 // ------- 8< -------
 
 int main(void) {
-    uint8_t i;
-    taskfn_t func;
-
     init();
 
     add_task(&run1);
     add_task(&run2);
 
     while(true) {
+        sched();
 
-        // scheduler
-        // run all processes secuentially
-        for(i=MAX_TASKS; i>0; i--) {
-            if(task_list[i]) {
-                func = task_list[i].taskfn;
-                func(NULL)
-            }
-        }
     }
 
+    return 0;
 }
 
