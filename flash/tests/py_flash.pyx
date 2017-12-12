@@ -5,10 +5,15 @@ include "py_interrupt.pyx"
 
 cimport cflash
 
-def flash(unsigned char set):
-    pass
+
+def flash(uint8_t choice):
+    cflash.flash(choice)
 
 
 def flash_incr():
-    pass
+    cflash.flash_incr()
+
+
+def runner():
+    return cflash.runner()
 

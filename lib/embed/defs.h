@@ -15,7 +15,7 @@
 #endif
 
 typedef enum toggle {ON, OFF} toggle_t;
-extern uint8_t FLAG_VECT;
+extern volatile uint8_t FLAG_VECT;
 
 // generic function to toggle a register
 inline void _toggle(volatile uint8_t *reg, uint8_t mask, toggle_t choice) {

@@ -10,8 +10,9 @@
 
 #include <embed/usart.h>
 #include <embed/sleep.h>
+#include <embed/timer.h>
 
-#include "defs.h"
+#include <embed/defs.h>
 
 #define FLASHES 5
 #define BAUD  9600

@@ -3,12 +3,14 @@ ctypedef signed char int8_t
 ctypedef unsigned char uint8_t
 
 cdef extern from "flash.h":
-    void flash(unsigned char set);
-    void flash_incr();
+    void flash(uint8_t set)
+    void flash_incr()
+    void runner()
+    # uint8_t FLAG_VECT = 0
 
 
 cdef extern from "embed/interrupt.h":
-    isr_TIMER1_COMPB_vect();
+    isr_TIMER1_COMPB_vect()
 
 
 cdef extern from "avr/io.h":

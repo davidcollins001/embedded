@@ -1,8 +1,4 @@
 
-#include <usart.h>
-#include <sleep.h>
-#include <timer.h>
-
 #include "flash.h"
 
 const volatile char* usart_str;
