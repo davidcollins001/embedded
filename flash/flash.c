@@ -17,7 +17,7 @@ static void setup_port(void) {
 static void init(void) {
     setup_port();
     init_usart(false);
-    init_interupt(0);
+    init_interrupt(0);
     init_timer(RATE);
 
     // clear any existing interrupts
@@ -59,8 +59,8 @@ void runner(void) {
 
         // user pressed switch
         if(pinb && !count) {
-            TCNT1 = 0;
-            OCR1A = INT_RATE*2+1;
+            TCNT1 = (uint8_t)0;
+            OCR1A = (uint8_t)INT_RATE*2+1;
             portc = PORTC;
         }
 
@@ -76,7 +76,7 @@ void runner(void) {
                     // reset interrupt/port after desired flashes
                     if(count++ == 2*FLASHES) {
                         // double rate/half delay
-                        OCR1A = INT_RATE;
+                        OCR1A = (uint8_t)INT_RATE;
                         count = 0;
                         PORTC = portc;
                     }

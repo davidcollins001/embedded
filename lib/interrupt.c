@@ -12,9 +12,9 @@ ISR(TIMER1_COMPB_vect) {
 
 void init_interrupt(uint8_t type) {
     if(type == 0) {
-    // setup pin interrupt
-    EIMSK |= _BV(INT0);
-    EICRA |= _BV(ISC00) | _BV(ISC01);
+        // setup pin interrupt
+        EIMSK |= _BV(INT0);
+        EICRA |= _BV(ISC00) | _BV(ISC01);
     } else if(type == 1) {
         // trigger interrupt on any logical change (rising or falling edge)
         PCICR |= _BV(PCIE2);

@@ -16,7 +16,7 @@ static void init(void) {
 
     init_usart(true);
     init_timer(INT_RATE);
-    init_interrupt();
+    init_interrupt((uint8_t)1);
 
     // clear any existing interrupts
     EIFR = _BV(INTF0) | _BV(INTF1);

@@ -20,8 +20,11 @@ uint8_t PCIF2 = 0x2;
 uint8_t PCINT16 = 0x1;
 uint8_t PCMSK2 = 0x1;
 
+uint8_t DDRB = 0x0;
 uint8_t DDRC = 0x1;
 uint8_t PORTC = 0x1;
+uint8_t PINB = 0x0;
+uint8_t PB1 = 0x1;
 
 uint8_t UBRR0H = 0x1;
 uint8_t UBRR0L = 0x2;
@@ -32,6 +35,7 @@ uint8_t UDRE0 = 0x2;
 uint8_t UDR0 = 0x4;
 
 uint8_t TCCR1B = 0x1;
+uint8_t TCNT1 = 0x1;
 uint8_t CS10 = 0x1;
 uint8_t CS12 = 0x1;
 uint8_t WGM12 = 0x1;
@@ -50,4 +54,6 @@ uint8_t EIMSK = 0x1;
 uint8_t EICRA = 0x0;
 uint8_t ISC00 = 0x1;
 uint8_t ISC01 = 0x2;
-                                                                                                                e
+
+
+

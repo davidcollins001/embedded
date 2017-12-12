@@ -11,6 +11,7 @@
 #include <embed/usart.h>
 #include <embed/sleep.h>
 #include <embed/timer.h>
+#include <embed/interrupt.h>
 
 #include <embed/defs.h>
 
