@@ -17,6 +17,7 @@ typedef void (*taskfn_t)(void);
 typedef struct {
     uint8_t id;
     taskfn_t task_fn;
+    uint8_t status;
 } task_t;
 
 task_t task_list[MAX_TASKS+1];

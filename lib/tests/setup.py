@@ -21,29 +21,37 @@ os.environ["CC"] = "gcc"
 os.environ["LDSHARED"] = "gcc"
 
 
-def find_lib(path):
-    ## find all c files needed to compile
-    import os
-    return ["%s/%s" % (path, f) for f in os.listdir(path) if f.endswith(".c")]
+def find_lib(path, ext="c", recurse=False):
+    ## recursively find all c files needed to compile
+    files = []
+    for f in os.listdir(path):
+        if os.path.isdir(os.path.join(path, f)) and recurse:
+            files.extend(find_lib(os.path.join(path, f), ext=ext))
+        else:
+            if f.endswith(ext):
+                files.append("%s/%s" % (path, f))
+
+    return files
+
+
+def build_exts():
+    exts = []
+    for ext in find_lib(".", ext="pyx"):
+        name = os.path.splitext(os.path.basename(ext))[0]
+        csource = "../%s.c" % name.split('_')[1]
+        sources = [csource, ext, "../defs.c"] + find_lib(STUBDIR, recurse=True)
+        exts.append(
+            Extension(name,
+                      sources,
+                      include_dirs=["..", ".", STUBDIR],
+                      extra_compile_args=compile_args,
+                      extra_link_args=link_args)
+        )
+    return exts
 
 
 ## build separate libs for each pyx file
 setup(
-    ext_modules=cythonize([
-        Extension("py_usart", ["../usart.c", "py_usart.pyx"] +
-                              find_lib("stubs/include/avr") +
-                              find_lib("stubs/include/util"),
-                  include_dirs=["../", STUBDIR],
-                  extra_compile_args=compile_args,
-                  extra_link_args=link_args),
-         Extension("py_interrupt", ["../interrupt.c", "py_interrupt.pyx",
-                                    "../defs.c"] +
-                              find_lib("stubs/include/avr") +
-                              find_lib("stubs/include/util"),
-                  include_dirs=["../", STUBDIR],
-                  extra_compile_args=compile_args,
-                  extra_link_args=link_args),
-
-    ])
+    ext_modules=cythonize(build_exts())
 )
 

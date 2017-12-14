@@ -21,11 +21,9 @@ tests: $(TESTS) $(LIBS)
 	done
 
 $(LIBS): $(SOURCES) #clean
-	@echo -----$(SOURCES)
 	$(PYTHON) setup.py build_ext $(CYTHON_ARGS)
 
 .PHONY: clean libs
 clean:
-	@echo sources - $(SOURCES)
 	rm -rf build *.so *.c
 
