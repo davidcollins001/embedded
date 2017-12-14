@@ -2,7 +2,7 @@
 #include <embed/rtos.h>
 
 
-void init(void) {
+void init_tasks(void) {
     // uint8_t i;
     tasks_num = 0;
 
@@ -14,7 +14,7 @@ void init(void) {
 
 
 void idle_task(void) {
-    sleep_now(SLEEP_MODE_PWR_DOWN);
+    // sleep_now(SLEEP_MODE_PWR_DOWN);
 }
 
 
@@ -43,13 +43,19 @@ void add_task(taskfn_t task) {
         task_list[tasks_num] = idle;
         tasks_num++;
     }
+    printf("%d\n" ,tasks_num);
 }
 
 void sched(void) {
     uint8_t i;
+    printf("%d\n" ,tasks_num);
+    // TODO: fix: tasks_num is 0 here, should be 2
 
     // scheduler - run all processes secuentially
-    for(i=tasks_num; i>0; i--) {
+    // for(i=tasks_num; i; i--) {
+    for(i=0; i<tasks_num; i--) {
+    printf("%d\n" ,3);
+        printf("running task %d\n", i);
         task_list[i].task_fn();
     }
 }
@@ -57,14 +63,17 @@ void sched(void) {
 // ------- 8< -------
 
 int main(void) {
-    init();
+    init_tasks();
 
-    add_task(&run1);
-    add_task(&run2);
+    add_task(run1);
+    add_task(run2);
 
     while(true) {
         sched();
 
+#ifdef TEST
+        return 1;
+#endif
     }
 
     return 0;

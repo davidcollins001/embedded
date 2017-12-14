@@ -3,6 +3,7 @@
 #define RTOS_H_
 
 #include <inttypes.h>
+#include <stddef.h>
 
 #include <avr/io.h>
 
@@ -10,7 +11,6 @@
 #include <embed/interrupt.h>
 
 #define MAX_TASKS 5
-#define NULL ( (void *) 0)
 
 typedef void (*taskfn_t)(void);
 
