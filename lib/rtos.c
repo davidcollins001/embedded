@@ -62,7 +62,7 @@ void sched(void) {
 
 // ------- 8< -------
 
-int main(void) {
+int run(void) {
     init_tasks();
 
     add_task(run1);
@@ -79,3 +79,9 @@ int main(void) {
     return 0;
 }
 
+
+#ifdef TEST
+int main(void) {
+    run();
+}
+#endif

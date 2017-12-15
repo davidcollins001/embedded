@@ -2,8 +2,7 @@
 import unittest
 from py_talk_back import (
     toggle_tranceiver, get_cmd, talk_back, isr_USART_RX_vect,
-    isr_USART_UDRE_vect, isr_PCINT2_vect, UCSR0B, RXEN0, TXEN0, UDRE0,  UCSR0A,
-    FLAG_VECT
+    isr_USART_UDRE_vect, isr_PCINT2_vect, UCSR0B, RXEN0, TXEN0, FLAG_VECT
 )
 
 RX, TX = 0, 1

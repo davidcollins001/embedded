@@ -34,7 +34,7 @@ void flash(uint8_t set) {
     PORTC = 0;
 
     for(i=set; i<5+set; i+=2)
-        PORTC |= _BV(i);
+        PORTC |= _BV(1 << i);
 }
 
 void flash_incr(void) {
@@ -49,9 +49,11 @@ void flash_incr(void) {
 
 
 void runner(void) {
+#ifdef TEST
+    // running tests make vars static to rerun and simulate clock tick
+    static
+#endif
     uint8_t count = 0, flag_vect, set = 0, pinb = 0, portc = 0;
-
-    init();
 
     while(true) {
         flag_vect = FLAG_VECT;
@@ -87,10 +89,14 @@ void runner(void) {
         }
         // put mcu to sleep
         sleep_now(SLEEP_MODE_IDLE);
+#ifdef TEST
+        break;
+#endif
     }
 }
 
 int main(void) {
+    init();
     runner();
 }
 

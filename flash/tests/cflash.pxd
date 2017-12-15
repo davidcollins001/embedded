@@ -6,17 +6,16 @@ cdef extern from "flash.h":
     void flash(uint8_t set)
     void flash_incr()
     void runner()
-    # uint8_t FLAG_VECT = 0
 
 
-cdef extern from "embed/interrupt.h":
-    isr_TIMER1_COMPB_vect()
+cdef extern from "embed/timer.h":
+    uint8_t int_TIMER1_COMPB
 
 
 cdef extern from "avr/io.h":
-    uint8_t UCSR0B
-    uint8_t RXEN0
-    uint8_t TXEN0
-    uint8_t UDRE0
-    uint8_t UCSR0A
+    uint8_t PINB
+    uint8_t PB1
+    uint8_t PORTC
+    uint8_t OCR1A
+    uint8_t FLAG_VECT
 
