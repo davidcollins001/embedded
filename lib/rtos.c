@@ -1,72 +1,96 @@
 
 #include <embed/rtos.h>
 
+#include <stdio.h>
 
-void init_tasks(void) {
-    // uint8_t i;
-    tasks_num = 0;
+/*
+ * TODO:
+ *  - add ability to selecte priority when adding task
+ */
 
-    // for(i=MAX_TASKS; i>0; i--)
-        // task_list[i] = (task_t)NULL;
-
-    PORTC = 0;
-}
-
+static uint8_t rtos_initialised = 0;
 
 void idle_task(void) {
-    // sleep_now(SLEEP_MODE_PWR_DOWN);
+#ifdef DEBUG
+    printf("Running idle task, entering sleep");
+#endif
+    sleep_now(SLEEP_MODE_PWR_DOWN);
 }
-
 
 void run1(void) {
     PORTC ^= 1;
 }
 
-
 void run2(void) {
     PORTC ^= 2;
 }
 
+void init_rtos(void) {
+    uint8_t i;
+    tasks_num = 0;
 
-void add_task(taskfn_t task) {
+    // set timer to interrupt ever 1/8 s
+    init_timer(3, WDT);
+
+    // ensure task list is empty
+    for(i=MAX_TASKS; i; i--) {
+        task_list[i].id = 0;
+        task_list[i].task = (task_t)0x0;
+        task_list[i].delay = 0;
+        task_list[i].period = 0;
+        task_list[i].status = STOPPED;
+    }
+    rtos_initialised = 1;
 
     // put idle task as first task
-    if(tasks_num == 0) {
-        task_t idle = { 0, idle_task };
-        // *idle.task_fn = &idle_task;
-        task_list[0] = idle;
-        tasks_num++;
-    }
+    add_task(idle_task, 0);
 
-    if(tasks_num < MAX_TASKS) {
-        task_t idle = { tasks_num, task};
+    PORTC = 0;
+}
+
+void add_task(task_t task, uint8_t period) {
+    if(rtos_initialised && (tasks_num <= MAX_TASKS)) {
+        tcb_t idle = { tasks_num, task, period, period, RUNNABLE};
         task_list[tasks_num] = idle;
         tasks_num++;
     }
-    printf("%d\n" ,tasks_num);
 }
 
 void sched(void) {
+    /*
+     * run all processes sequentially from highest to lowest
+     * with id=1 being the idle process
+     */
     uint8_t i;
-    printf("%d\n" ,tasks_num);
-    // TODO: fix: tasks_num is 0 here, should be 2
+    tcb_t *task;
+
+    // check rtos has been initialised
+    assert(rtos_initialised);
 
     // scheduler - run all processes secuentially
-    // for(i=tasks_num; i; i--) {
-    for(i=0; i<tasks_num; i--) {
-    printf("%d\n" ,3);
-        printf("running task %d\n", i);
-        task_list[i].task_fn();
+    for(i=tasks_num; i; i--) {
+        task = &task_list[i-1];
+        if(task->period)
+            task->delay--;
+        if((!task->delay) && (task->status == RUNNABLE)) {
+#ifdef DEBUG
+            printf("running task: %d\n", i-1);
+#endif
+            task->status = RUNNING;
+            (*task->task)();
+            task->delay = task->period;
+            task->status = RUNNABLE;
+        }
     }
 }
 
 // ------- 8< -------
 
 int run(void) {
-    init_tasks();
+    init_rtos();
 
-    add_task(run1);
-    add_task(run2);
+    add_task(run1, (uint16_t)8);
+    add_task(run2, (uint16_t)4);
 
     while(true) {
         sched();
@@ -78,7 +102,6 @@ int run(void) {
 
     return 0;
 }
-
 
 #ifdef TEST
 int main(void) {

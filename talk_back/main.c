@@ -15,7 +15,7 @@ static void init(void) {
     ADCSRA = 0;
 
     init_usart(true);
-    init_timer(INT_RATE);
+    init_timer(INT_RATE, WDT);
     init_interrupt((uint8_t)1);
 
     // clear any existing interrupts

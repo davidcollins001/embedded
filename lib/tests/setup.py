@@ -34,12 +34,17 @@ def find_lib(path, ext="c", recurse=False):
     return files
 
 
+addl_src = {
+    "rtos": ["../sleep.c", "../timer.c"]
+}
+
 def build_exts():
     exts = []
     for ext in find_lib(".", ext="pyx"):
         name = os.path.splitext(os.path.basename(ext))[0]
-        csource = "../%s.c" % name.split('_')[1]
-        sources = [csource, ext, "../defs.c"] + find_lib(STUBDIR, recurse=True)
+	cname = name.split('_')[1]
+        csource = ["../%s.c" % cname] + addl_src.get(cname, [])
+        sources = csource + [ext, "../defs.c"] + find_lib(STUBDIR, recurse=True)
         exts.append(
             Extension(name,
                       sources,

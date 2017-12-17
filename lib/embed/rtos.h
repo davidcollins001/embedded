@@ -4,27 +4,34 @@
 
 #include <inttypes.h>
 #include <stddef.h>
+#include <assert.h>
 
 #include <avr/io.h>
 
 #include <embed/sleep.h>
-#include <embed/interrupt.h>
+#include <embed/timer.h>
 
 #define MAX_TASKS 5
 
-typedef void (*taskfn_t)(void);
+#define RUNNABLE 0x1
+#define RUNNING 0x2
+#define STOPPED 0x3
+
+typedef void (*task_t)(void);
 
 typedef struct {
     uint8_t id;
-    taskfn_t task_fn;
+    task_t task;
+    uint16_t delay;
+    uint16_t period;
     uint8_t status;
-} task_t;
+} tcb_t;
 
-task_t task_list[MAX_TASKS+1];
+tcb_t task_list[MAX_TASKS+1];
 uint8_t tasks_num;
 
-void init_tasks(void);
-void add_task(taskfn_t task);
+void init_rtos(void);
+void add_task(task_t task, uint8_t period);
 void sched(void);
 
 #endif //RTOS_H_

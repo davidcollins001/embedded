@@ -18,7 +18,7 @@ static void init(void) {
     setup_port();
     init_usart(false);
     init_interrupt(0);
-    init_timer(RATE);
+    init_timer(RATE, TIMER1);
 
     // clear any existing interrupts
     EIFR = _BV(INTF0) | _BV(INTF1);
