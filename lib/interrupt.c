@@ -6,9 +6,9 @@ ISR(PCINT2_vect) {
     FLAG_VECT |= _BV(WAITING_INPUT);
 }
 
-ISR(TIMER1_COMPB_vect) {
-    FLAG_VECT |= _BV(int_TIMER1_COMPB);
-}
+// ISR(TIMER1_COMPB_vect) {
+    // FLAG_VECT |= _BV(int_TIMER1_COMPB);
+// }
 
 void init_interrupt(uint8_t type) {
     if(type == 0) {

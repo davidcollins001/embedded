@@ -5,6 +5,7 @@
 
 /*
  * TODO:
+ *  - both tasks run at the same time
  *  - add ability to selecte priority when adding task
  */
 
@@ -17,11 +18,11 @@ void idle_task(void) {
     sleep_now(SLEEP_MODE_PWR_DOWN);
 }
 
-void run1(void) {
+void debug_run1(void) {
     PORTC ^= 1;
 }
 
-void run2(void) {
+void debug_run2(void) {
     PORTC ^= 2;
 }
 
@@ -89,8 +90,8 @@ void sched(void) {
 int run(void) {
     init_rtos();
 
-    add_task(run1, (uint16_t)8);
-    add_task(run2, (uint16_t)4);
+    add_task(debug_run1, (uint16_t)8);
+    add_task(debug_run2, (uint16_t)4);
 
     while(true) {
         sched();

@@ -36,8 +36,9 @@ void init_wdt(uint8_t rate) {
     // enable the WD change bit
     WDTCSR = (uint8_t)(_BV(WDCE) | _BV(WDE));
     // enable WDT interrupt and set to 8s
-    //WDTCSR = (uint8_t)(_BV(WDIE) | WDTO_8S);
-    WDTCSR = (uint8_t)(_BV(WDIE) | _BV(WDP3) | _BV(WDP0));
+    // WDTCSR = (uint8_t)(_BV(WDIE) | WDTO_8S);
+    // WDTCSR = (uint8_t)(_BV(WDIE) | _BV(WDP3) | _BV(WDP0));
+    WDTCSR = (uint8_t)(_BV(WDIE) | rate);
     sei();
 }
 
