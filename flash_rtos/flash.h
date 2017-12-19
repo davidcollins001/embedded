@@ -11,7 +11,11 @@
 #include <embed/defs.h>
 #include <embed/rtos.h>
 
+void init(void);
 void runner(void);
+
+void run1(void);
+void run2(void);
 
 #endif //__flash_h__
 

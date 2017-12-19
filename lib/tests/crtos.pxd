@@ -10,7 +10,7 @@ cdef extern from "embed/rtos.h":
         uint8_t status
 
     void init_rtos()
-    void add_task(task_t task, uint16_t period)
+    void add_task(task_t task, uint8_t period)
     void sched()
 
     uint8_t tasks_num

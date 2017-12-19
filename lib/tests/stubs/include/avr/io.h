@@ -29,6 +29,9 @@ extern uint8_t DDRC;
 extern uint8_t PORTC;
 extern uint8_t PINB;
 extern uint8_t PB1;
+extern uint8_t PC1;
+extern uint8_t PC2;
+extern uint8_t PC3;
 
 extern uint8_t UBRR0H;
 extern uint8_t UBRR0L;

@@ -50,9 +50,16 @@ void init_rtos(void) {
 }
 
 void add_task(task_t task, uint8_t period) {
-    if(rtos_initialised && (tasks_num <= MAX_TASKS)) {
-        tcb_t idle = { tasks_num, task, period, period, RUNNABLE};
-        task_list[tasks_num] = idle;
+    tcb_t *t;
+
+    if(rtos_initialised) {
+        t = &task_list[tasks_num];
+
+        t->id = tasks_num;
+        t->task = task;
+        t->delay = period;
+        t->period = period;
+        t->status = RUNNABLE;
         tasks_num++;
     }
 }
@@ -90,8 +97,8 @@ void sched(void) {
 int run(void) {
     init_rtos();
 
-    add_task(debug_run1, (uint16_t)8);
-    add_task(debug_run2, (uint16_t)4);
+    add_task(debug_run1, (uint8_t)8);
+    add_task(debug_run2, (uint8_t)4);
 
     while(true) {
         sched();
@@ -104,8 +111,10 @@ int run(void) {
     return 0;
 }
 
-#ifdef TEST
+/*
+#ifndef TEST
 int main(void) {
     run();
 }
 #endif
+*/

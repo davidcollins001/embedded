@@ -22,8 +22,8 @@ typedef void (*task_t)(void);
 typedef struct {
     uint8_t id;
     task_t task;
-    uint16_t delay;
-    uint16_t period;
+    uint8_t delay;
+    uint8_t period;
     uint8_t status;
 } tcb_t;
 

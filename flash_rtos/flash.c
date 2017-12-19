@@ -9,38 +9,46 @@ static void setup_port(void) {
     ADCSRA = 0;
 }
 
-static void init(void) {
+void init(void) {
     setup_port();
     init_rtos();
+
+    add_task(run1, 8);
+    add_task(run2, 4);
 
     // clear any existing interrupts
     EIFR = _BV(INTF0) | _BV(INTF1);
 
-    FLAG_VECT = 0;
     sei();
+    printf("PC3 %d\n");
 }
 
 void run1(void) {
+    printf("in run1 \n");
     PORTC |= _BV(PC1);
 }
 
 void run2(void) {
+    printf("in run2 \n");
     PORTC ^= _BV(PC2);
 }
 
 void runner(void) {
 
-    add_task(run1, (uint16_t)8);
-    add_task(run2, (uint16_t)4);
-
     while(true) {
         PORTC ^= _BV(PC3);
         sched();
+
+#ifdef TEST
+        // allow tests to run code
+        break;
+#endif
     }
 }
 
 int main(void) {
     init();
+
     runner();
 }
 
