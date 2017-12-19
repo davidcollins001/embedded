@@ -26,12 +26,18 @@ def PORTC(value=None):
         return cflash.PORTC
 
 
-
 def PINB(value=None):
     if value is not None:
         cflash.PINB = value
     else:
         return cflash.PINB
+
+
+def PB1(value=None):
+    if value is not None:
+        cflash.PB1 = value
+    else:
+        return cflash.PB1
 
 
 def FLAG_VECT(value=None):
