@@ -112,7 +112,7 @@ static void prepare_sleep(void) {
     toggle_tranceiver(ON);
 
     // reset watchdog timer for interrupt
-    wdt_enable_int();
+    init_wdt(_BV(WDP3) | _BV(WDP0));
 }
 
 // TESTING:
@@ -121,7 +121,13 @@ static void prepare_sleep(void) {
 //	3) as 1 and 2, usart to wake, wdt to return to sleep
 
 int talk_back(void) {
+#ifdef TEST
+    static
+#endif
     uint8_t len = 0;
+#ifdef TEST
+    static
+#endif
     char cmd[64];
 
     while(true) {
@@ -141,9 +147,8 @@ int talk_back(void) {
             while(!uart_tx_empty())
                 ;
 #else
-            // exit - needed to prevent tests spinning
-            if(! strncmp(cmd, EXIT, 4))
-                return 1;
+            // exit to prevent tests spinning
+            break;
 #endif
         }
     }

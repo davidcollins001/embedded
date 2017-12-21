@@ -27,7 +27,7 @@ uint8_t PINB = 0x0;
 uint8_t PB1 = 0x1;
 uint8_t PC1 = 0x1;
 uint8_t PC2 = 0x2;
-uint8_t PC3 = 0x4;
+uint8_t PC3 = 0x3;
 
 uint8_t UBRR0H = 0x1;
 uint8_t UBRR0L = 0x2;

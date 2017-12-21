@@ -5,7 +5,8 @@ ctypedef unsigned char uint8_t
 cdef extern from "flash.h":
     void init()
     void runner()
-
+    void run1()
+    void run2()
 
 cdef extern from "avr/io.h":
     uint8_t PORTC

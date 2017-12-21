@@ -20,16 +20,13 @@ void init(void) {
     EIFR = _BV(INTF0) | _BV(INTF1);
 
     sei();
-    printf("PC3 %d\n");
 }
 
 void run1(void) {
-    printf("in run1 \n");
-    PORTC |= _BV(PC1);
+    PORTC ^= _BV(PC1);
 }
 
 void run2(void) {
-    printf("in run2 \n");
     PORTC ^= _BV(PC2);
 }
 

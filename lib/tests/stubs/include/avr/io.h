@@ -4,6 +4,8 @@
 
 #include<stdint.h>
 
+#define _BV(name) (1 << name)
+
 extern uint8_t INT0;
 
 extern uint8_t DDRC;

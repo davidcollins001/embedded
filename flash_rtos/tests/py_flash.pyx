@@ -4,11 +4,19 @@
 # include "py_interrupt.pyx"
 
 cimport cflash
-from cflash cimport int8_t, uint8_t
+from cflash cimport int8_t
 
 
 def init():
     cflash.init()
+
+
+def run1():
+    cflash.run1()
+
+
+def run2():
+    cflash.run2()
 
 
 def runner():
@@ -36,11 +44,10 @@ def PC2(value=None):
         return cflash.PC2
 
 
-# def PC3(value=None):
-    # if value is not None:
-        # cflash.PC3 = value
-    # else:
-        # return cflash.PC3
+def PC3(value=None):
+    if value is not None:
+        cflash.PC3 = value
+    else:
+        return cflash.PC3
 
-PC3 = cflash.PC3
 
