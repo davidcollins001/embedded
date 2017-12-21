@@ -52,6 +52,7 @@ class Test_rtos(unittest.TestCase):
 
     def test_add_task(self):
         init_rtos()
+
         ## init_rtos adds idle task
         tasks = 1
         self.assertEqual(tasks_num(), tasks,
@@ -62,7 +63,7 @@ class Test_rtos(unittest.TestCase):
                 tasks += 1
             add_task(task_1, 100)
 
-            msg = "should be %d tasks added: %d" % (MAX_TASKS, len(task_list()))
+            msg = "should be %d tasks added: %d" % (tasks, tasks_num())
             self.assertEqual(tasks_num(), tasks, msg)
 
         def incr():

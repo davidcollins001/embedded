@@ -52,7 +52,7 @@ void init_rtos(void) {
 void add_task(task_t task, uint8_t period) {
     tcb_t *t;
 
-    if(rtos_initialised) {
+    if(rtos_initialised && (tasks_num <= MAX_TASKS)) {
         t = &task_list[tasks_num];
 
         t->id = tasks_num;
