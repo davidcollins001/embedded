@@ -9,7 +9,7 @@ class Test_interrupt(unittest.TestCase):
 
     def test_toggle_pcint(self):
         ## set PCIE2 which is used to set register
-        PCIE2(value=8)
+        # PCIE2(value=8)
         PCICR(value=0)
 
         toggle_interrupt(ON)

@@ -4,7 +4,8 @@
 
 #include<stdint.h>
 
-#define _BV(name) (1 << name)
+//#define _BV(bit) (1 << (bit))
+#define _BV(bit) bit
 
 extern uint8_t INT0;
 
