@@ -13,6 +13,10 @@ DEBUG = 1
 count = 0
 
 
+def _BV(pin):
+    return 1 << pin
+
+
 def usart_gets(cmd):
     global count
     try:
@@ -44,6 +48,7 @@ class Test_talk_back(unittest.TestCase):
     def test_char_cmd(self):
         ## cbeck when buffer is full
         data = "missed command.>S.junk"
+        import pdb; pdb.set_trace()  # noqa: E702
         isr_USART_RX_vect(data)
         l, cmd = get_cmd()
         sndx = data.index('>')
@@ -92,13 +97,13 @@ class Test_talk_back(unittest.TestCase):
         UCSR0B(value=0)
 
         toggle_tranceiver(ON)
-        self.assertEqual(UCSR0B(), RXEN0() | TXEN0())
+        self.assertEqual(UCSR0B(), _BV(RXEN0()) | _BV(TXEN0()))
 
         toggle_tranceiver(ON)
-        self.assertEqual(UCSR0B(), RXEN0() | TXEN0())
+        self.assertEqual(UCSR0B(), _BV(RXEN0()) | _BV(TXEN0()))
 
         toggle_tranceiver(OFF)
-        self.assertNotEqual(UCSR0B(), RXEN0() | TXEN0())
+        self.assertNotEqual(UCSR0B(), _BV(RXEN0()) | _BV(TXEN0()))
 
     def test_talk_back(self):
         ## test seems to fail, but is actually correct
