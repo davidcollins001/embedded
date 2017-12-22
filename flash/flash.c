@@ -34,7 +34,7 @@ void flash(uint8_t set) {
     PORTC = 0;
 
     for(i=set; i<5+set; i+=2)
-        PORTC |= _BV(1 << i);
+        PORTC |= _BV(i);
 }
 
 void flash_incr(void) {

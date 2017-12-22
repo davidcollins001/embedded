@@ -31,7 +31,7 @@ def usart_gets(cmd):
 class Test_talk_back(unittest.TestCase):
 
     def setUp(self):
-        FLAG_VECT(1)
+        FLAG_VECT(2)
 
     def test_get_cmd(self):
         ## check when buffer is full
@@ -48,7 +48,6 @@ class Test_talk_back(unittest.TestCase):
     def test_char_cmd(self):
         ## cbeck when buffer is full
         data = "missed command.>S.junk"
-        import pdb; pdb.set_trace()  # noqa: E702
         isr_USART_RX_vect(data)
         l, cmd = get_cmd()
         sndx = data.index('>')
@@ -123,7 +122,7 @@ class Test_talk_back(unittest.TestCase):
             ## read data back from usart
             sndx = data.index('>')
             endx = sndx + data[sndx:].index('.')
-            exp = data[sndx + 1: endx]
+            exp = data[sndx + 1: endx + 1]
             output = isr_USART_UDRE_vect()
             ## format exp for output format
             exp = "\n>>> %s\n\n" % exp
