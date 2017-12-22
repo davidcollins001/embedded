@@ -26,12 +26,12 @@ void debug_run2(void) {
     PORTC ^= 2;
 }
 
-void init_rtos(void) {
+void init_rtos(uint8_t rate) {
     uint8_t i;
     tasks_num = 0;
 
     // set timer to interrupt ever 1/8 s
-    init_timer(3, WDT);
+    init_timer(rate, WDT);
 
     // ensure task list is empty
     for(i=MAX_TASKS; i; i--) {
@@ -59,7 +59,7 @@ void add_task(task_t task, uint8_t period) {
         t->task = task;
         t->delay = period;
         t->period = period;
-        t->status = RUNNABLE;
+        t->status = READY;
         tasks_num++;
     }
 }
@@ -75,23 +75,38 @@ void sched(void) {
     // check rtos has been initialised
     assert(rtos_initialised);
 
-    // scheduler - run all processes secuentially
+    // scheduler - run all processes sequentially
     for(i=tasks_num; i; i--) {
         task = &task_list[i-1];
         if(task->period)
             task->delay--;
-        if((!task->delay) && (task->status == RUNNABLE)) {
+        if((!task->delay) && (task->status == READY)) {
 #ifdef DEBUG
             printf("running task: %d\n", i-1);
 #endif
             task->status = RUNNING;
             (*task->task)();
             task->delay = task->period;
-            task->status = RUNNABLE;
+            task->status = READY;
         }
+        // mark yielded task ready to run
+        if(task->status == YIELD)
+            task->status == READY;
+
     }
 }
 
+void yield(void) {
+    uint8_t i;
+    task_t task;
+
+    for(i=tasks_num; i; i--) {
+        task = &task_list[i-1];
+        if(task->status == RUNNING)
+            task->status = YIELD;
+
+    sched()
+}
 
 // should be in test program
 int run(void) {
