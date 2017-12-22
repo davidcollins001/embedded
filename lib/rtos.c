@@ -92,8 +92,8 @@ void sched(void) {
     }
 }
 
-// ------- 8< -------
 
+// should be in test program
 int run(void) {
     init_rtos();
 
