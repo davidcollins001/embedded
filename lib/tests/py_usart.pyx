@@ -3,6 +3,10 @@ from cusart cimport uint8_t
 cimport cusart
 
 
+def _BV(pin):
+    return 1 << pin
+
+
 def usart_puts(char *data):
     cusart.usart_puts(data)
 
@@ -10,15 +14,14 @@ def usart_puts(char *data):
 def usart_gets():
     cdef char c_str[64]
     cdef int len = cusart.usart_gets(c_str)
-    cdef bytes py_str = c_str;
+    cdef bytes py_str = c_str
     return len, py_str
 
 
 def isr_USART_UDRE_vect():
 
     ## ensure in state to write
-    cusart.UCSR0B = 1
-    cusart.UDRIE0 = 1
+    cusart.UCSR0B = _BV(cusart.UDRIE0)
 
     data = []
     while cusart.UCSR0B:
@@ -36,8 +39,8 @@ def isr_USART_RX_vect(data):
     cdef char *c_data = data
 
     ## ensure in state to write
-    cusart.UCSR0A = 1
-    cusart.RXC0 = 1
+    print "RXC ", bin(cusart.RXC0), _BV(cusart.RXC0), cusart.UDRIE0, _BV(cusart.UDRIE0)
+    cusart.UCSR0A = _BV(cusart.RXC0)
 
     for c in c_data:
         cusart.UDR0 = c

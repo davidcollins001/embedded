@@ -8,13 +8,13 @@ NUM_LEDS = 6
 class Test_flash(unittest.TestCase):
 
     def test_run(self):
-        PORTC(value=0)
         for fun, pin in [(run1, PC1), (run2, PC2)]:
+            PORTC(value=0)
             for i in xrange(5):
                 fun()
-                exp = PORTC() | (not (i % 2)) << pin()
+                exp = (not (i % 2)) << pin()
                 msg = "expect %s to give %s but got %s" % \
-                        (fun.__name__, exp, PORTC())
+                        (fun.__name__, bin(exp), bin(PORTC()))
                 self.assertEqual(PORTC(), exp, msg)
 
     def test_runner(self):

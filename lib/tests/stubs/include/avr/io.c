@@ -92,6 +92,8 @@ uint8_t ISC00 = 0x0;
 // mcu status register
 uint8_t MCUSR = 0x0;
 //
+uint8_t WDRF = 0x3;
+uint8_t BORF = 0x2;
 
 // wacthdog timer regiser
 uint8_t WDTCSR = 0x0;

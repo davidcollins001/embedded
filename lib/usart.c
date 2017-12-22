@@ -91,10 +91,9 @@ static void print_str(char *ptr) {
 }
 
 static void usart_puts_T(const char *data, mem_type_t type) {
-
     // write to buffer while it's not full
     while(read_byte(data, type) != '\0' &&
-        buffer_write(&tx_buffer, read_byte(data++, type)) == BUFFER_OK)
+          buffer_write(&tx_buffer, read_byte(data++, type)) == BUFFER_OK)
         ;
 
 #ifndef SERIAL_USART

@@ -115,9 +115,6 @@ class Test_talk_back(unittest.TestCase):
             isr_USART_RX_vect(data)
             ret = talk_back()
 
-            msg = "expected 1 exit status, check exit path"
-            self.assertEqual(ret, 1, msg)
-
             ## read data back from usart
             sndx = data.index('>')
             endx = sndx + data[sndx:].index('.')

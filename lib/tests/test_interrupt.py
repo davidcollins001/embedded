@@ -13,19 +13,15 @@ class Test_interrupt(unittest.TestCase):
         PCICR(value=0)
 
         toggle_interrupt(ON)
-        self.assertEqual(PCICR(), PCIE2())
+        self.assertEqual(PCICR(), 1 << PCIE2())
 
         toggle_interrupt(ON)
-        self.assertEqual(PCICR(), PCIE2())
+        self.assertEqual(PCICR(), 1 << PCIE2())
 
         toggle_interrupt(OFF)
-        self.assertNotEqual(PCICR(), PCIE2())
+        self.assertNotEqual(PCICR(), 1 << PCIE2())
 
 
 if __name__ == "__main__":
     unittest.main()
-
-
-
-
 

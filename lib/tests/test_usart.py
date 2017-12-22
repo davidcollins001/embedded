@@ -16,11 +16,11 @@ class Buf(Enum):
 
 class TestUsart(unittest.TestCase):
 
-    def test_usart_puts(self):
+    def test_usart_gets(self):
         self._test_usart_buffers(isr_USART_RX_vect, Buf.RX.value, usart_gets,
                                  Buf.TX.value)
 
-    def test_usart_gets(self):
+    def test_usart_puts(self):
         self._test_usart_buffers(usart_puts, Buf.TX.value, isr_USART_UDRE_vect,
                                  Buf.RX.value, )
 
