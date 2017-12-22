@@ -39,7 +39,6 @@ def isr_USART_RX_vect(data):
     cdef char *c_data = data
 
     ## ensure in state to write
-    print "RXC ", bin(cusart.RXC0), _BV(cusart.RXC0), cusart.UDRIE0, _BV(cusart.UDRIE0)
     cusart.UCSR0A = _BV(cusart.RXC0)
 
     for c in c_data:

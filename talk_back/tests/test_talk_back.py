@@ -113,7 +113,7 @@ class Test_talk_back(unittest.TestCase):
             isr_PCINT2_vect()
             ## put data into system and process
             isr_USART_RX_vect(data)
-            ret = talk_back()
+            talk_back()
 
             ## read data back from usart
             sndx = data.index('>')
