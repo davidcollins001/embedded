@@ -12,6 +12,7 @@
 #include <embed/sleep.h>
 #include <embed/timer.h>
 #include <embed/interrupt.h>
+#include <embed/rtos.h>
 
 #include <embed/defs.h>
 
@@ -27,9 +28,10 @@
 // flag to indicate interrupt has ocurred
 // volatile uint8_t FLAG_VECT = 0;
 
-void flash(uint8_t set);
+void flash(void);
 void flash_incr(void);
 void runner(void);
+void yield(void);
 
 #endif //__flash_h__
 

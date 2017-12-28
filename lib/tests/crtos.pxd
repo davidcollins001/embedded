@@ -9,7 +9,7 @@ cdef extern from "embed/rtos.h":
         uint8_t delay
         uint8_t status
 
-    void init_rtos()
+    void init_rtos(uint8_t rate)
     void add_task(task_t task, uint8_t period)
     void sched()
 

@@ -7,23 +7,15 @@ cimport cflash
 from cflash cimport int8_t, uint8_t
 
 
-def flash(uint8_t choice):
-    cflash.flash(choice)
+PB1 = cflash.PB1
+
+
+def flash():
+    cflash.flash()
 
 
 def flash_incr():
     cflash.flash_incr()
-
-
-def runner():
-    cflash.runner()
-
-
-def PORTC(value=None):
-    if value is not None:
-        cflash.PORTC = value
-    else:
-        return cflash.PORTC
 
 
 def PINB(value=None):
@@ -33,16 +25,10 @@ def PINB(value=None):
         return cflash.PINB
 
 
-def PB1(value=None):
+def PORTC(value=None):
     if value is not None:
-        cflash.PB1 = value
+        cflash.PORTC = value
     else:
-        return cflash.PB1
+        return cflash.PORTC
 
-
-def FLAG_VECT(value=None):
-    if value is not None:
-        cflash.FLAG_VECT = value
-    else:
-        return cflash.FLAG_VECT
 

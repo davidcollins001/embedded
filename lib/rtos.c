@@ -91,26 +91,27 @@ void sched(void) {
         }
         // mark yielded task ready to run
         if(task->status == YIELD)
-            task->status == READY;
+            task->status = READY;
 
     }
 }
 
 void yield(void) {
     uint8_t i;
-    task_t task;
+    tcb_t *task;
 
     for(i=tasks_num; i; i--) {
         task = &task_list[i-1];
         if(task->status == RUNNING)
             task->status = YIELD;
+    }
 
-    sched()
+    sched();
 }
 
 // should be in test program
 int run(void) {
-    init_rtos();
+    init_rtos(3);
 
     add_task(debug_run1, (uint8_t)8);
     add_task(debug_run2, (uint8_t)4);

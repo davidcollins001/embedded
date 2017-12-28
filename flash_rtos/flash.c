@@ -29,91 +29,55 @@ static void init(void) {
     sei();
 }
 
-void flash_incr(void) {
-    usart_puts(PSTR("incr\n"));
+static flash_count = 0;
 
-    // change lights when timer interrupt happens
-    if((PORTC == 0) || (PORTC >= 0x20))
-        PORTC = 1;
-    else
-        PORTC = PORTC << 1;
+static uint8_t which(void) {
+    // function to determine if increment or flash should be run
+    uint8_t pinb = PINB & _BV(PB1);
+
+    // switch has been pressed or in process of flashing
+    return pinb || flash_count;
 }
 
-void flash(uint8_t set) {
-    unsigned char i;
-    static counter = 0;
+void flash_incr(void) {
+    if(!which()) {
+        usart_puts(PSTR("incr\n"));
 
-    if(USER_SWITCH) {
+        // change lights when timer interrupt happens
+        if((PORTC == 0) || (PORTC >= 0x20))
+            PORTC = 1;
+        else
+            PORTC = PORTC << 1;
+    }
+}
+
+void flash(void) {
+    unsigned char i;
+    static uint8_t set = 0;
+
+    if(which()) {
         usart_puts(PSTR("flash\n"));
 
         PORTC = 0;
 
+        // set alternating leds to on
         for(i=set; i<5+set; i+=2)
             PORTC |= _BV(i);
 
-        counter++;
-    }
-    if(counter == FLASHES)
-        yield();
-}
+        flash_count++;
+        set ^= 1;
 
-void runner(void) {
-#ifdef TEST
-    // running tests make vars static to rerun and simulate clock tick
-    static
-#endif
-    uint8_t count = 0, flag_vect, set = 0, pinb = 0, portc = 0;
-
-    while(true) {
-        flag_vect = FLAG_VECT;
-        pinb = PINB & _BV(PB1);
-
-        // user pressed switch
-        if(pinb && !count) {
-            TCNT1 = (uint8_t)0;
-            OCR1A = (uint8_t)INT_RATE*2+1;
-            portc = PORTC;
-        }
-
-        // check what interrupt was raised
-        if(flag_vect & _BV(int_TIMER1_COMPB)) {
-                // reset timer if that was trigger
-                FLAG_VECT &= ~_BV(int_TIMER1_COMPB);
-
-                // run code associated with interrupt
-                if(pinb || count) {
-                    flash(set);
-
-                    // reset interrupt/port after desired flashes
-                    if(count++ == 2*FLASHES) {
-                        // double rate/half delay
-                        OCR1A = (uint8_t)INT_RATE;
-                        count = 0;
-                        PORTC = portc;
-                    }
-                    set ^= 1;
-                }
-                else
-                    flash_incr();
-        }
-        // put mcu to sleep
-        sleep_now(SLEEP_MODE_IDLE);
-#ifdef TEST
-        break;
-#endif
+        // reset counter since number of flashes has expired
+        if(flash_count == 2*FLASHES)
+            flash_count = 0;
     }
 }
 
-void runner2(void) {
-
-}
 
 int main(void) {
     init();
 
-    add_task(flash, 8)
-    add_task(flash_incr, 4)
-
-    runner();
+    add_task(flash, 8);
+    add_task(flash_incr, 4);
 }
 

@@ -4,8 +4,8 @@ cimport crtos
 ctypedef void (*taskfn_t)()
 
 
-def init_rtos():
-    crtos.init_rtos()
+def init_rtos(rate):
+    crtos.init_rtos(rate)
 
 ## NOTE: to get C to call a python function (task) send a cython function
 ##       to C and have the python function stored in a global variable.

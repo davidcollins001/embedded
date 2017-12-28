@@ -33,7 +33,7 @@ class Test_rtos(unittest.TestCase):
         ## set tasks_num to check init_rtos sets it correctly
         tasks_num(1)
 
-        init_rtos()
+        init_rtos(3)
         self.assertEqual(tasks_num(), 1, "expect tasks_num to be 1")
 
         attrs = [("id", 0),
@@ -51,7 +51,7 @@ class Test_rtos(unittest.TestCase):
                 self.assertEqual(task[attr], state, msg)
 
     def test_add_task(self):
-        init_rtos()
+        init_rtos(3)
 
         ## init_rtos adds idle task
         tasks = 1
@@ -93,7 +93,7 @@ class Test_rtos(unittest.TestCase):
         cases = [("task_1", 5),
                  ("task_2", 1)]
 
-        init_rtos()
+        init_rtos(3)
 
         ## add two tasks to be run
         add_task(task_1, 10)
