@@ -89,24 +89,7 @@ void sched(void) {
             task->delay = task->period;
             task->status = READY;
         }
-        // mark yielded task ready to run
-        if(task->status == YIELD)
-            task->status = READY;
-
     }
-}
-
-void yield(void) {
-    uint8_t i;
-    tcb_t *task;
-
-    for(i=tasks_num; i; i--) {
-        task = &task_list[i-1];
-        if(task->status == RUNNING)
-            task->status = YIELD;
-    }
-
-    sched();
 }
 
 // should be in test program

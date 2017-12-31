@@ -28,7 +28,7 @@ static void init(void) {
     sei();
 }
 
-static flash_count = 0;
+static uint8_t flash_count = 0;
 
 static uint8_t which(void) {
     // function to determine if increment or flash should be run
@@ -39,6 +39,7 @@ static uint8_t which(void) {
 }
 
 void flash_incr(void) {
+
     if(!which()) {
         usart_puts(PSTR("incr\n"));
 
@@ -51,7 +52,7 @@ void flash_incr(void) {
 }
 
 void flash(void) {
-    unsigned char i;
+    uint8_t i;
     static uint8_t set = 0;
 
     if(which()) {
@@ -63,20 +64,26 @@ void flash(void) {
         for(i=set; i<5+set; i+=2)
             PORTC |= _BV(i);
 
-        flash_count++;
         set ^= 1;
 
         // reset counter since number of flashes has expired
-        if(flash_count == 2*FLASHES)
+        if(++flash_count == 2*FLASHES)
             flash_count = 0;
+
     }
 }
-
 
 int main(void) {
     init();
 
-    add_task(flash, 8);
-    add_task(flash_incr, 4);
+    add_task(flash_incr, 8);
+    add_task(flash, 4);
+
+    while(true) {
+        sched();
+#ifdef TEST
+        break;
+#endif
+    }
 }
 
