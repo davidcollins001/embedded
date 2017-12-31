@@ -1,6 +1,6 @@
 
-#ifndef TIMER_H_
-#define TIMER_H_
+#ifndef _TIMER_H_
+#define _TIMER_H_
 
 #include <avr/interrupt.h>
 #include<avr/wdt.h>
@@ -16,7 +16,7 @@ void init_timer(uint8_t rate, counter_t type);
 void init_wdt(uint8_t rate);
 void init_timer1(uint8_t rate);
 
-#endif //TIMER_H_
+#endif //_TIMER_H_
 
 // input: abcde>abcd
 // cmd:   abcde>abcd

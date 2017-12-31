@@ -1,6 +1,6 @@
 
-#ifndef IO_
-#define IO_
+#ifndef _IO_H_
+#define _IO_H_
 
 #include<stdint.h>
 
@@ -112,5 +112,5 @@ extern uint8_t WDP2;
 extern uint8_t WDP1;
 extern uint8_t WDP0;
 
-#endif //IO_
+#endif //_IO_H_
 

@@ -1,7 +1,6 @@
 
 #include "flash.h"
 
-const volatile char* usart_str;
 
 static void setup_port(void) {
     // setup pin direction

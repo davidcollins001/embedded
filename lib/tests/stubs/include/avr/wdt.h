@@ -1,6 +1,6 @@
 
-#ifndef AVR_WDT_
-#define AVR_WDT_
+#ifndef _AVR_WDT_H_
+#define _AVR_WDT_H_
 
 #include<stdint.h>
 
@@ -14,5 +14,5 @@ void wdt_enable_int(int mode);
 void wdt_disable();
 void wdt_reset();
 
-#endif //AVR_WDT_
+#endif //_AVR_WDT_H_
 

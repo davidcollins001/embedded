@@ -11,7 +11,7 @@ static void setup_port(void) {
 
 void init(void) {
     setup_port();
-    init_rtos();
+    init_rtos(3);
 
     add_task(run1, 8);
     add_task(run2, 4);

@@ -1,6 +1,6 @@
 
-#ifndef DEFS_H_
-#define DEFS_H_
+#ifndef _DEFS_H_
+#define _DEFS_H_
 
 #include<stdbool.h>
 #include <inttypes.h>
@@ -25,5 +25,5 @@ inline void _toggle(volatile uint8_t *reg, uint8_t mask, toggle_t choice) {
         *reg &= ~mask;
 }
 
-#endif //DEFS_H_
+#endif //_DEFS_H_
 

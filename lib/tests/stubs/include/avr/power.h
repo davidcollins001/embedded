@@ -1,6 +1,6 @@
 
-#ifndef AVR_POWER_
-#define AVR_POWER_
+#ifndef _AVR_POWER_H_
+#define _AVR_POWER_H_
 
 #include<stdint.h>
 
@@ -14,7 +14,5 @@
 extern uint8_t SLEEP_MODE_PWR_DOWN;
 extern uint8_t SLEEP_MODE_IDLE;
 
-#endif //AVR_POWER_
-
-
+#endif //_AVR_POWER_H_
 

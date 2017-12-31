@@ -1,6 +1,6 @@
 
-#ifndef INTERRUPT_H_
-#define INTERRUPT_H_
+#ifndef _INTERRUPT_H_
+#define _INTERRUPT_H_
 
 #include <avr/interrupt.h>
 #include <avr/io.h>
@@ -17,5 +17,5 @@ void toggle_interrupt(toggle_t choice);
 void isr_PCINT2_vect();
 #endif
 
-#endif //INTERRUPT_H_
+#endif //_INTERRUPT_H_
 

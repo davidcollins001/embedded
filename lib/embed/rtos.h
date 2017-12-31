@@ -1,6 +1,6 @@
 
-#ifndef RTOS_H_
-#define RTOS_H_
+#ifndef _RTOS_H_
+#define _RTOS_H_
 
 #include <inttypes.h>
 #include <stddef.h>
@@ -35,5 +35,5 @@ void init_rtos(uint8_t rate);
 void add_task(task_t task, uint8_t period);
 void sched(void);
 
-#endif //RTOS_H_
+#endif //_RTOS_H_
 

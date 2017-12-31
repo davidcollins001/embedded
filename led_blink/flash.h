@@ -1,6 +1,6 @@
 
-#ifndef __flash_h__
-#define __flash_h__
+#ifndef _FLASH_H_
+#define _FLASH_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,5 +17,5 @@ void runner(void);
 void run1(void);
 void run2(void);
 
-#endif //__flash_h__
+#endif //_FLASH_H_
 

@@ -1,8 +1,8 @@
 
-#ifndef DELAY_
-#define DELAY_
+#ifndef _DELAY_H_
+#define _DELAY_H_
 
 void _delay_ms(double delay);
 
-#endif //DELAY_
+#endif //_DELAY_H_
 

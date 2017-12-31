@@ -1,6 +1,6 @@
 
-#ifndef __flash_h__
-#define __flash_h__
+#ifndef _FLASH_H_
+#define _FLASH_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,8 +30,6 @@
 
 void flash(void);
 void flash_incr(void);
-void runner(void);
-void yield(void);
 
-#endif //__flash_h__
+#endif //_FLASH_H_
 

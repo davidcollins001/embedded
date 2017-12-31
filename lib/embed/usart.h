@@ -1,6 +1,6 @@
 
-#ifndef USART_H_
-#define USART_H_
+#ifndef _USART_H_
+#define _USART_H_
 
 #include <stdio.h>
 #include <string.h>
@@ -46,5 +46,5 @@ void isr_USART_UDRE_vect();
 void isr_USART_RX_vect();
 #endif
 
-#endif //USART_H_
+#endif //_USART_H_
 

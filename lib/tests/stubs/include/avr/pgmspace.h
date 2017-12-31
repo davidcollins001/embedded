@@ -1,6 +1,6 @@
 
-#ifndef AVR_PGMSPACE_
-#define AVR_PGMSPACE_
+#ifndef _AVR_PGMSPACE_H_
+#define _AVR_PGMSPACE_H_
 
 // #include "../io.h"
 
@@ -11,5 +11,5 @@ char pgm_read_byte(const char *data);
    // return *data;
 // }
 
-#endif //AVR_PGMSPACE_
+#endif //_AVR_PGMSPACE_H_
 

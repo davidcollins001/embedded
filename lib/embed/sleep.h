@@ -1,6 +1,6 @@
 
-#ifndef SLEEP_H_
-#define SLEEP_H_
+#ifndef _SLEEP_H_
+#define _SLEEP_H_
 
 #include <avr/sleep.h>
 #include <avr/power.h>
@@ -8,5 +8,5 @@
 
 void sleep_now(uint8_t mode);
 
-#endif //SLEEP_H_
+#endif //_SLEEP_H_
 

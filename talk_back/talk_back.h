@@ -1,6 +1,6 @@
 
-#ifndef TALK_BACK_H_
-#define TALK_BACK_H_
+#ifndef _TALK_BACK_H_
+#define _TALK_BACK_H_
 
 #include <stdio.h>
 #include<stdlib.h>
@@ -28,6 +28,5 @@ void toggle_tranceiver(toggle_t choice);
 uint8_t get_cmd(char *cmd);
 int talk_back(void);
 
-#endif //TALK_BACK_H_
-
+#endif // _TALK_BACK_H_
 
