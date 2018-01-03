@@ -1,7 +1,5 @@
-#include <setjmp.h>
-#include <avr/io.h>
-#include <avr/interrupt.h>
-#include "tinythreads.h"
+
+#include <embed/tinythreads.h>
 
 thread freeQ   = threads;
 thread readyQ  = NULL;
@@ -48,7 +46,7 @@ static void dispatch(thread next) {
     }
 }
 
-void spawn(void (* function)(int), int arg) {
+void spawn(void (*function)(uint8_t), uint16_t arg) {
     thread newp;
 
     DISABLE();
@@ -73,7 +71,9 @@ void spawn(void (* function)(int), int arg) {
 }
 
 void yield(void) {
-
+    enqueue(current, &readyQ);
+    thread t = dequeue(&readyQ);
+    dispatch(t);
 }
 
 void lock(mutex_t *m) {

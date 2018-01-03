@@ -17,7 +17,7 @@ ISR(WDT_vect) {
 }
 
 
-void init_timer1(uint8_t rate) {
+void init_timer1(uint16_t rate) {
     // setup timer interrupt with 1024 prescale
     TCCR1B |= _BV(CS10) | _BV(CS12);
 
@@ -30,7 +30,7 @@ void init_timer1(uint8_t rate) {
     TIMSK1 |= _BV(OCIE1B);
 }
 
-void init_wdt(uint8_t rate) {
+void init_wdt(uint16_t rate) {
     // set WDT to interrupt mode, not reset
     cli();
     // enable the WD change bit
@@ -42,7 +42,7 @@ void init_wdt(uint8_t rate) {
     sei();
 }
 
-void init_timer(uint8_t rate, counter_t type) {
+void init_timer(uint16_t rate, counter_t type) {
     tick = 0;
 
     if(type == TIMER1)
