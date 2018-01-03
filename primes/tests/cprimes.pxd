@@ -2,7 +2,7 @@
 from stdint cimport uint16_t, uint16_t
 
 cdef extern from "primes.h":
-    uint8_t is_prime(uint16_t i)
+    bint is_prime(uint16_t i)
     void computePrimes(uint8_t id)
     void printAt(uint8_t id, uint16_t num)
 

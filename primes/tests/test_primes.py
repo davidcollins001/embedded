@@ -1,9 +1,8 @@
 
 import unittest
-from py_flash import flash_incr, flash, runner, PORTC, PINB, PB1, FLAG_VECT
+from py_primes import is_prime, computePrimes, printAt
 
-NUM_LEDS = 6
-FLASHES = 2 * 5
+
 int_TIMER1_COMPB = 0x2
 
 
@@ -11,28 +10,18 @@ def _BV(pin):
     return 1 << pin
 
 
-class Test_flash(unittest.TestCase):
+class Test_primes(unittest.TestCase):
 
     def setUp(self):
         pass
 
-    def test_flash_incr(self):
-        exp = 1
-        PORTC(0)
+    def test_is_prime(self):
         for i in xrange(8):
-            flash_incr()
-            self.assertEqual(2 ** (i % 6), PORTC())
-            exp <<= 1
+            print is_prime(i)
 
-    def test_flash(self):
-        PORTC(0)
+    def test_computePrimes(self):
         for s in xrange(5):
-            exp = 0b10101
-            exp = exp << (s % 2)
-            flash(s % 2)
-            msg = "expect PORTC to be incremented: %s got %s" % \
-                    (bin(exp), bin(PORTC()))
-            self.assertEqual(exp, PORTC(), msg)
+            print computePrimes(
 
     def test_runner(self):
         PINB(value=0)
@@ -60,7 +49,7 @@ class Test_flash(unittest.TestCase):
                     (bin(_BV(i % 6)), bin(PORTC()))
             self.assertEqual(PORTC(), _BV(i % 6), msg)
 
-        ## after flashes the incremantal restarts from here
+        ## after primeses the incremantal restarts from here
         portc = PORTC()
 
         ## user presses switch now
@@ -69,14 +58,14 @@ class Test_flash(unittest.TestCase):
         exp = 0b10101
         marker = 0
         ## simulate switch press after two clock ticks
-        for i in xrange(FLASHES):
+        for i in xrange(primesES):
             ## set flag as timer interrupt handler would
             FLAG_VECT(value=_BV(int_TIMER1_COMPB))
             runner()
-            msg = "expect PORTC to flash: %s got %s" % \
+            msg = "expect PORTC to primes: %s got %s" % \
                     (bin(exp << marker), bin(PORTC()))
             self.assertEqual(PORTC(), exp << marker, msg)
-            ## move bits in exp over 1 for second part of flash
+            ## move bits in exp over 1 for second part of primes
             marker ^= 1
 
         ## simulate switch press after two clock ticks
