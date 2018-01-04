@@ -77,10 +77,12 @@ void yield(void) {
 }
 
 void lock(mutex_t *m) {
-
+    DISABLE();
+    ENABLE();
 }
 
 void unlock(mutex_t *m) {
-
+    DISABLE();
+    ENABLE();
 }
 

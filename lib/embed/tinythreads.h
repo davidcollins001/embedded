@@ -1,8 +1,3 @@
-/*
- *
- * tinythreads.h
- *
- */
 
 #ifndef _TINYTHREADS_H
 #define _TINYTHREADS_H
@@ -30,7 +25,10 @@ struct thread_block {
 };
 
 struct thread_block threads[NTHREADS];
-struct thread_block  initp;
+struct thread_block initp;
+
+void spawn(void (*code)(uint8_t), uint16_t arg);
+void yield(void);
 
 typedef struct mutex_block {
     int locked;
@@ -41,8 +39,5 @@ typedef struct mutex_block {
 void lock(mutex_t *m);
 void unlock(mutex_t *m);
 
-void spawn(void (*code)(uint8_t), uint16_t arg);
-void yield(void);
-
-#endif
+#endif // _TINYTHREADS_H
 
