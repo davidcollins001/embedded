@@ -28,7 +28,7 @@ def add_task(task, period):
     ## store python function for cython callback (that c calls) to call
 
     ## TODO: make this better
-    ## add "next" callback function otherwis same python function is called
+    ## add "next" callback function otherwise same python function is called
     if crtos.tasks_num == 1:
         callback_fn_1 = task
         c_callback = c_callback_1

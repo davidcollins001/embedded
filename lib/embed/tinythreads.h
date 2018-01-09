@@ -17,21 +17,29 @@
 
 typedef struct thread_block *thread;
 struct thread_block {
-    void (*function)(uint8_t);      // code to run
+    void (*function)(uint16_t);      // code to run
     uint16_t arg;                    // argument to the above
     thread next;                // for use in linked lists
     jmp_buf context;            // machine state
     uint8_t stack[STACKSIZE];   // execution stack space
 };
 
+extern thread freeQ;
+extern thread readyQ;
+extern thread current;
+
 struct thread_block threads[NTHREADS];
 struct thread_block initp;
 
-void spawn(void (*code)(uint8_t), uint16_t arg);
+void spawn(void (*code)(uint16_t), uint16_t arg);
 void yield(void);
 
+#ifdef TEST
+void t_yield(void);
+#endif // TEST
+
 typedef struct mutex_block {
-    int locked;
+    uint8_t locked;
     thread waitQ;
 } mutex_t;
 

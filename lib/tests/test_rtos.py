@@ -16,6 +16,7 @@ def task_1():
     global TASK_RUN_COUNT
     TASK_RUN_COUNT["task_1"] += 1
 
+
 def task_2():
     global TASK_RUN_COUNT
     TASK_RUN_COUNT["task_2"] += 1

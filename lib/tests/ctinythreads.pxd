@@ -1,30 +1,37 @@
 
-from stdtypes cimport uint8_t, uint16_t
+from libc.stdint cimport uint8_t, uint16_t
 
+ctypedef void (*function_t)(uint16_t)
 
 cdef extern from "embed/tinythreads.h":
-    void spawn(void (*code)(uint8_t), uint16_t arg)
-    void yield()
 
-    # struct thread_block {
-        # void (*function)(uint8_t)      // code to run
-        # uint16_t arg                    // argument to the above
-        # thread next                // for use in linked lists
-        # jmp_buf context            // machine state
-        # uint8_t stack[STACKSIZE]   // execution stack space
-    # }
-    # typedef struct thread_block *thread
+    ctypedef thread_block *thread
+
+    cdef struct thread_block:
+        function_t function
+        uint16_t arg
+        thread next
+        # jmp_buf context
+        # uint8_t stack[STACKSIZE]
+
+    thread freeQ
+    thread readyQ
+    thread current
+
+    void spawn(void (*code)(uint16_t), uint16_t arg)
+    void t_yield()
+    void dispatch(thread next)
+
+    cdef struct mutex_block:
+        uint8_t locked
+        # thread waitQ
+
+    ctypedef mutex_block mutex_t
+
+    void lock(mutex_t *m)
+    void unlock(mutex_t *m)
 
     # struct thread_block threads[NTHREADS]
     # struct thread_block initp
 
-    # typedef struct mutex_block {
-        # int locked
-        # thread waitQ
-    # } mutex_t
-
     #define MUTEX_INIT {0,0}
-    void lock(mutex_t *m)
-    void unlock(mutex_t *m)
-
-
