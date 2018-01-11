@@ -23,20 +23,20 @@ cdef void c_callback_2(uint16_t arg):
 
 
 cdef class py_thread:
-    cdef ctinythreads.function_t function
+    cdef ctinythreads.function_t _function
     cdef int arg
     cdef ctinythreads.thread  next
 
     ## call this after construction to set args
     cdef cinit(self, ctinythreads.function_t fn, uint16_t arg,
                ctinythreads.thread next):
-        self.function = fn
+        self._function = fn
         self.arg = arg
         self.next = next
 
-    @property
-    def function(self):
-        return self.function(self.arg)
+    cpdef function(self):
+        if self._function != NULL:
+            return self._function(self.arg)
 
     @property
     def arg(self):
@@ -87,6 +87,7 @@ def unlock(mutex):
 
 def get_queue_items(q):
     """get threads from queue, either "freeQ" or "readyQ" """
+    # cdef thread_block t
 
     if q == "freeQ":
         queue = ctinythreads.freeQ
@@ -94,14 +95,18 @@ def get_queue_items(q):
         queue = ctinythreads.readyQ
 
     ts = []
+    i = 0
+    # for i in xrange(NTHREADS):
     for t in queue[:NTHREADS]:
-        thread = py_thread()
-        thread.cinit(t.function, t.arg, t.next)
-        ts.append(thread)
+        try:
+        # if t != NULL:
+            print ">>>>>>>", i
+            # t = queue[i]
+            thread = py_thread()
+            thread.cinit(t.function, t.arg, t.next)
+            ts.append(thread)
+        except:
+            return ts
 
     return ts
-
-
-cdef get_queue_item(q):
-    pass
 

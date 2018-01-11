@@ -20,7 +20,6 @@ cdef extern from "embed/tinythreads.h":
 
     void spawn(void (*code)(uint16_t), uint16_t arg)
     void t_yield()
-    void dispatch(thread next)
 
     cdef struct mutex_block:
         uint8_t locked

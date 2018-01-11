@@ -12,8 +12,12 @@
 #define ENABLE()        sei()
 #define STACKSIZE       80
 #define NTHREADS        4
+#ifndef TEST
 #define SETSTACK(buf, a) *((unsigned int*)(buf) + 8) = (unsigned int)a + STACKSIZE - 4; \
                          *((unsigned int*)(buf) + 9) = (unsigned int)a + STACKSIZE - 4
+#else
+#define SETSTACK(buf, a)
+#endif
 
 typedef struct thread_block *thread;
 struct thread_block {

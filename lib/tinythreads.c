@@ -30,11 +30,13 @@ static void enqueue(thread p, thread *queue) {
 
 static thread dequeue(thread *queue) {
     thread p = *queue;
+    printf(">> queue: %p\n", queue);
     if (*queue) {
         *queue = (*queue)->next;
     } else {
         // Empty queue, kernel panic!!!
         while (1) ;  // not much else to do...
+        // TODO: restart
     }
     return p;
 }

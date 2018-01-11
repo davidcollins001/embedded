@@ -10,20 +10,20 @@ TASK_RUN_COUNT = defaultdict(int)
 
 
 ## for more than 2 callbacks add a cdef c_callback_n to py_rtos.pyx
-def task_1(arg):
+def task(arg):
     global TASK_RUN_COUNT
-    TASK_RUN_COUNT["task_1"] += 1
-    while True:
-        print "task 1"
-        t_yield()
+    ## assume arg is task id
+    TASK_RUN_COUNT["task_%d" % arg] += 1
+    # while True:
+    print "task %d" % arg
+    t_yield()
+
+def task_1(arg):
+    task(arg)
 
 
 def task_2(arg):
-    global TASK_RUN_COUNT
-    TASK_RUN_COUNT["task_2"] += 1
-    while True:
-        print "task 2"
-        t_yield()
+    task(arg)
 
 
 class Test_primes(unittest.TestCase):
@@ -32,11 +32,14 @@ class Test_primes(unittest.TestCase):
 
         spawn(task_1, 1)
         spawn(task_2, 2)
+        spawn(task_1, 3)
+        spawn(task_2, 4)
 
-        ts = get_queue_items("freeQ")
-        print [t.arg for t in ts]
+        import pdb; pdb.set_trace()
         ts = get_queue_items("readyQ")
         print [t.arg for t in ts]
+        ts = get_queue_items("freeQ")
+        print [t.arg for t in ts if t]
         import pdb; pdb.set_trace()
 
     def test_yield(self):
