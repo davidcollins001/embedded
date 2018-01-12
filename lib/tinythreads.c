@@ -1,6 +1,10 @@
 
 #include <embed/tinythreads.h>
 
+// NOTE: this might not be needed with newer cython
+struct thread_block threads[NTHREADS];
+struct thread_block initp;
+
 thread freeQ   = threads;
 thread readyQ  = NULL;
 thread current = &initp;

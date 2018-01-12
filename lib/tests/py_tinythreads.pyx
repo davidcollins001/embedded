@@ -1,6 +1,6 @@
 
 cimport ctinythreads
-from ctinythreads cimport NTHREADS , function_t, thread
+from ctinythreads cimport function_t, thread
 from libc.stdint cimport uint8_t, uint16_t
 # from ctinythreads cimport spawn, yield, lock, unlock
 
@@ -93,18 +93,15 @@ def get_queue_items(q):
         queue = ctinythreads.readyQ
 
     ts = []
-    i = 0
-    # for i in xrange(NTHREADS):
-    for t in queue[:NTHREADS]:
-        try:
-        # if t != NULL:
-            print ">>>>>>>", i
-            # t = queue[i]
-            thread = py_thread()
-            thread.init(&t)
-            ts.append(thread)
-        except:
-            return ts
+    cdef thread tt = queue
+
+    while not t_null(tt):
+        thread = py_thread()
+        thread.init(tt)
+        ts.append(thread)
+        tt = tt.next
 
     return ts
 
+cdef bint t_null(thread t):
+    return t == NULL

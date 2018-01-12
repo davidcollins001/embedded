@@ -16,7 +16,7 @@ def task(arg):
     TASK_RUN_COUNT["task_%d" % arg] += 1
     # while True:
     print "task %d" % arg
-    t_yield()
+    # t_yield()
 
 def task_1(arg):
     task(arg)
@@ -26,21 +26,21 @@ def task_2(arg):
     task(arg)
 
 
-class Test_primes(unittest.TestCase):
+class Test_tinythreads(unittest.TestCase):
 
     def test_spawn(self):
 
         spawn(task_1, 1)
         spawn(task_2, 2)
-        spawn(task_1, 3)
-        spawn(task_2, 4)
+        spawn(task_2, 3)
 
-        import pdb; pdb.set_trace()
+        ## check freeQ/readyQ get dequeue/enqueue'd correctly
         ts = get_queue_items("readyQ")
-        print [t.arg for t in ts]
+        self.assertEqual(len(ts), 3)
+        self.assertEqual([t.arg for t in ts], [1, 2, 3])
         ts = get_queue_items("freeQ")
-        print [t.arg for t in ts if t]
-        import pdb; pdb.set_trace()
+        self.assertEqual(len(ts), 1)
+        self.assertEqual([t.arg for t in ts if t], [0])
 
     def test_yield(self):
         ## put thread A on ready q
