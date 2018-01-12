@@ -1,6 +1,8 @@
 
 from libc.stdint cimport uint8_t, uint16_t
 
+NTHREADS = 4
+
 ctypedef void (*function_t)(uint16_t)
 
 cdef extern from "embed/tinythreads.h":
@@ -30,7 +32,7 @@ cdef extern from "embed/tinythreads.h":
     void lock(mutex_t *m)
     void unlock(mutex_t *m)
 
-    # struct thread_block threads[NTHREADS]
-    # struct thread_block initp
+    thread_block threads[NTHREADS]
+    thread_block initp
 
     #define MUTEX_INIT {0,0}

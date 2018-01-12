@@ -1,9 +1,8 @@
 
 cimport ctinythreads
+from ctinythreads cimport NTHREADS , function_t, thread
 from libc.stdint cimport uint8_t, uint16_t
 # from ctinythreads cimport spawn, yield, lock, unlock
-
-NTHREADS = 4
 
 
 ## NOTE: to get C to call a python function (task) send a cython function
@@ -23,32 +22,31 @@ cdef void c_callback_2(uint16_t arg):
 
 
 cdef class py_thread:
-    cdef ctinythreads.function_t _function
-    cdef int arg
-    cdef ctinythreads.thread  next
+    cdef function_t _function
+    cdef int _arg
+    cdef thread  _next
 
     ## call this after construction to set args
-    cdef cinit(self, ctinythreads.function_t fn, uint16_t arg,
-               ctinythreads.thread next):
-        self._function = fn
-        self.arg = arg
-        self.next = next
+    cdef init(self, thread t):
+        self._function = t.function
+        self._arg = t.arg
+        self._next = t.next
 
     cpdef function(self):
         if self._function != NULL:
-            return self._function(self.arg)
+            return self._function(self._arg)
 
     @property
     def arg(self):
-        return self.arg
+        return self._arg
 
     @property
     def next(self):
-        if self.next is NULL:
+        if self._next == NULL:
             print "NULL"
             return
         t = py_thread()
-        t.cinit(self.next.function, self.next.arg, self.next.next)
+        t.init(self._next)
         return t
 
 
@@ -103,7 +101,7 @@ def get_queue_items(q):
             print ">>>>>>>", i
             # t = queue[i]
             thread = py_thread()
-            thread.cinit(t.function, t.arg, t.next)
+            thread.init(&t)
             ts.append(thread)
         except:
             return ts
