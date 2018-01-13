@@ -14,9 +14,7 @@ def task(arg):
     global TASK_RUN_COUNT
     ## assume arg is task id
     TASK_RUN_COUNT["task_%d" % arg] += 1
-    # while True:
-    print "task %d" % arg
-    # t_yield()
+
 
 def task_1(arg):
     task(arg)
@@ -28,27 +26,38 @@ def task_2(arg):
 
 class Test_tinythreads(unittest.TestCase):
 
-    def test_spawn(self):
+    def test_spawn_yield(self):
 
         spawn(task_1, 1)
         spawn(task_2, 2)
         spawn(task_2, 3)
 
-        ## check freeQ/readyQ get dequeue/enqueue'd correctly
-        ts = get_queue_items("readyQ")
-        self.assertEqual(len(ts), 3)
-        self.assertEqual([t.arg for t in ts], [1, 2, 3])
-        ts = get_queue_items("freeQ")
-        self.assertEqual(len(ts), 1)
-        self.assertEqual([t.arg for t in ts if t], [0])
+        cases = [
+            #queue, exp spawn, exp yield
+            ("readyQ", [1, 2, 3], []),
+            ("freeQ", [0], [0, 1, 2, 3]),
+        ]
 
-    def test_yield(self):
-        ## put thread A on ready q
-        ## set current to thread Main
-        ## call yield
-        ## check current is thread A
-        ## check thread Main is on ready q
-        pass
+        ## check freeQ/readyQ get dequeue/enqueue'd correctly
+        for queue, exp, _ in cases:
+            ts = get_queue_items(queue)
+            self.assertEqual(len(ts), len(exp))
+            self.assertEqual([t.arg for t in ts], exp)
+
+        t_yield()
+
+        for queue, _, exp in cases:
+            ts = get_queue_items(queue)
+            self.assertEqual(len(ts), len(exp))
+            self.assertEqual([t.arg for t in ts], exp)
+
+        ## check function was called
+        counts = TASK_RUN_COUNT.items()
+        counts.sort()
+        for i in xrange(3):
+            self.assertEqual("task_%d" % (i + 1), counts[i][0])
+            self.assertEqual(1, counts[i][1])
+
 
     def test_lock(self):
         pass

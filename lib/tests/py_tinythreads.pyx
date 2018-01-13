@@ -31,6 +31,7 @@ cdef class py_thread:
         self._function = t.function
         self._arg = t.arg
         self._next = t.next
+        return self
 
     cpdef function(self):
         if self._function != NULL:
@@ -42,12 +43,8 @@ cdef class py_thread:
 
     @property
     def next(self):
-        if self._next == NULL:
-            print "NULL"
-            return
-        t = py_thread()
-        t.init(self._next)
-        return t
+        if not t_null(self._next):
+            return py_thread().init(self._next)
 
 
 def spawn(fn, arg):
@@ -64,9 +61,7 @@ def spawn(fn, arg):
         c_callback = c_callback_2
 
     ## set callback C calls to cython function
-    print "spawn"
     ctinythreads.spawn(c_callback, arg)
-    print "spawn - done"
 
 
 def t_yield():
@@ -85,21 +80,17 @@ def unlock(mutex):
 
 def get_queue_items(q):
     """get threads from queue, either "freeQ" or "readyQ" """
-    # cdef thread_block t
-
     if q == "freeQ":
         queue = ctinythreads.freeQ
     elif q == "readyQ":
         queue = ctinythreads.readyQ
 
+    ## convert queue to list
     ts = []
-    cdef thread tt = queue
-
-    while not t_null(tt):
-        thread = py_thread()
-        thread.init(tt)
-        ts.append(thread)
-        tt = tt.next
+    cdef thread t = queue
+    while not t_null(t):
+        ts.append(py_thread().init(t))
+        t = t.next
 
     return ts
 

@@ -34,7 +34,6 @@ static void enqueue(thread p, thread *queue) {
 
 static thread dequeue(thread *queue) {
     thread p = *queue;
-    printf(">> queue: %p\n", queue);
     if (*queue) {
         *queue = (*queue)->next;
     } else {
@@ -54,7 +53,6 @@ static void dispatch(thread next) {
 
 void spawn(void (*function)(uint16_t), uint16_t arg) {
     thread newp;
-    printf("start spawn %p %d\n", function, arg);
 
     DISABLE();
     if (!initialised)
@@ -66,7 +64,6 @@ void spawn(void (*function)(uint16_t), uint16_t arg) {
     newp->next = NULL;
     if (setjmp(newp->context) == 1) {
         ENABLE();
-        printf("running func\n");
         current->function(current->arg);
         DISABLE();
         enqueue(current, &freeQ);
@@ -76,7 +73,6 @@ void spawn(void (*function)(uint16_t), uint16_t arg) {
 
     enqueue(newp, &readyQ);
     ENABLE();
-    printf("start spawn - done\n");
 }
 
 void yield(void) {
@@ -86,6 +82,7 @@ void yield(void) {
 }
 
 #ifdef TEST
+// yield intereferes with python yield so create test version
 void t_yield(void) {
     yield();
 }
