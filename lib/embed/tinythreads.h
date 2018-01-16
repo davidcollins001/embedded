@@ -19,6 +19,8 @@
 #define SETSTACK(buf, a)
 #endif
 
+extern uint8_t initialised;
+
 typedef struct thread_block *thread;
 struct thread_block {
     void (*function)(uint16_t);      // code to run

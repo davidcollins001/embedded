@@ -36,14 +36,14 @@ def find_lib(path, ext="c", recurse=False):
     return files
 
 
-sources = ["py_flash.pyx"] + (
+sources = ["py_primes.pyx"] + (
     find_lib(LIBDIR) + find_lib("..") + find_lib(STUBDIR, recurse=True)
 )
 
-## build one lib - requires py_flash.pyx 'include'ing py_usart.pyx
+## build one lib - requires py_primes.pyx 'include'ing py_usart.pyx
 setup(
     ext_modules=cythonize([
-        Extension("py_flash",
+        Extension("py_primes",
                   sources,
                   include_dirs=["..", ".", LIBDIR, STUBDIR],
                   extra_compile_args=compile_args,

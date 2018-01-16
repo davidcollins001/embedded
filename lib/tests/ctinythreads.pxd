@@ -6,6 +6,7 @@ NTHREADS = 4
 ctypedef void (*function_t)(uint16_t)
 
 cdef extern from "embed/tinythreads.h":
+    bint initialised
 
     ctypedef thread_block *thread
 
@@ -25,7 +26,7 @@ cdef extern from "embed/tinythreads.h":
 
     cdef struct mutex_block:
         uint8_t locked
-        # thread waitQ
+        thread waitQ
 
     ctypedef mutex_block mutex_t
 

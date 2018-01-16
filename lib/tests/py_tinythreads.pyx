@@ -1,8 +1,16 @@
 
 cimport ctinythreads
-from ctinythreads cimport function_t, thread
+from ctinythreads cimport function_t, thread, mutex_t
 from libc.stdint cimport uint8_t, uint16_t
 # from ctinythreads cimport spawn, yield, lock, unlock
+
+
+def initialised():
+    ctinythreads.initialised = 0
+
+
+def current():
+    return py_thread().init(ctinythreads.current)
 
 
 ## NOTE: to get C to call a python function (task) send a cython function
@@ -68,14 +76,48 @@ def t_yield():
     ctinythreads.t_yield()
 
 
-def lock(mutex):
-    # ctinythreads.lock(mutex)
-    pass
+cdef class py_mutex:
+    cdef mutex_t _mutex
+    cdef bint locked
+    cdef thread  _waitQ
+
+    def __cinit__(self):
+        self._mutex.locked = 0
+        self._mutex.waitQ = NULL
+
+    ## call this after construction to set args
+    cdef init(self, mutex_t m):
+        self._mutex = m
+        self._locked = m.locked
+        self._waitQ = m.waitQ
+        return self
+
+    @property
+    def locked(self):
+        return self._mutex.locked
+
+    @property
+    def waitQ(self):
+        cdef thread t = self._waitQ
+        ts = []
+        if t:
+            print ">> ", t.arg
+        while not t_null(t):
+            ts.append(py_thread().init(t))
+            t = t.next
+        return ts
 
 
-def unlock(mutex):
-    # ctinythreads.unlock(mutex)
-    pass
+cdef mutex_t *cmutext(py_mutex m):
+    return &m._mutex
+
+
+def lock(py_mutex):
+    ctinythreads.lock(cmutext(py_mutex))
+
+
+def unlock(py_mutex):
+    ctinythreads.unlock(cmutext(py_mutex))
 
 
 def get_queue_items(q):

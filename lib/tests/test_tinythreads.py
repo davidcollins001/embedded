@@ -1,13 +1,17 @@
 
 
 import unittest
-from py_tinythreads import spawn, t_yield, lock, unlock, get_queue_items
+from mock import patch
+import py_tinythreads
+from py_tinythreads import (
+    spawn, t_yield, lock, unlock, get_queue_items, py_mutex
+)
 from collections import defaultdict
 
 
-int_TIMER1_COMPB = 0x2
 TASK_RUN_COUNT = defaultdict(int)
 
+tt = False
 
 ## for more than 2 callbacks add a cdef c_callback_n to py_rtos.pyx
 def task(arg):
@@ -25,6 +29,9 @@ def task_2(arg):
 
 
 class Test_tinythreads(unittest.TestCase):
+
+    def setUp(self):
+        py_tinythreads.initialised = 0
 
     def test_spawn_yield(self):
 
@@ -58,12 +65,28 @@ class Test_tinythreads(unittest.TestCase):
             self.assertEqual("task_%d" % (i + 1), counts[i][0])
             self.assertEqual(1, counts[i][1])
 
+    def test_mutex(self):
+        print 1111
+        spawn(task_1, 1)
+        spawn(task_2, 2)
 
-    def test_lock(self):
-        pass
+        global tt
+        tt = True
 
-    def test_unlock(self):
-        pass
+        print 'locking', py_tinythreads.current()
+        m = py_mutex()
+        lock(m)
+        print 1, py_tinythreads.current()
+        lock(m)
+        print 2, py_tinythreads.current()
+        # lock(m)
+        print "locked: ", m.locked
+        print m.waitQ
+        print TASK_RUN_COUNT
+        unlock(m)
+        print "unlocked: ", m.locked
+        unlock(m)
+        print "unlocked: ", m.locked
 
 
 if __name__ == "__main__":
