@@ -24,6 +24,7 @@ static void initialise(void) {
 static void enqueue(thread p, thread *queue) {
     p->next = NULL;
     if (*queue == NULL) {
+        printf("queue\n");
         *queue = p;
     } else {
         thread q = *queue;
@@ -48,7 +49,7 @@ static thread dequeue(thread *queue) {
 static void dispatch(thread next) {
     if (setjmp(current->context) == 0) {
         current = next;
-        printf("hello %p \n", current);
+        printf("hello (%d) \n", current->arg);
         longjmp(next->context, 1);
     }
 }
@@ -65,7 +66,7 @@ void spawn(void (*function)(uint16_t), uint16_t arg) {
     newp->arg = arg;
     newp->next = NULL;
     if (setjmp(newp->context) == 1) {
-        printf("resume\n");
+        printf("resume (%d)\n", current->arg);
         ENABLE();
         current->function(current->arg);
         DISABLE();
@@ -95,20 +96,22 @@ void lock(mutex_t *m) {
     if(m->locked) {
         printf("2");
         enqueue(current, &m->waitQ);
+        // vvvvvv debugging vvvvvv
         thread t = m->waitQ;
         while(t) {
-            printf("123 t %d\n", t->arg);
+            printf("123 t (%d)\n", t->arg);
             printf("---%p\n", t->next);
             t = t->next;
         }
+        // ^^^^^^ debugging ^^^^^^
         // dispatch(dequeue(&readyQ));
         t = dequeue(&readyQ);
-        printf(">> %p\n", t);
-        dispatch(t);
+        printf(">> %d\n", t->arg);
+        // dispatch(t);
     } else {
+        printf("1");
         m->locked = 1;
     }
-    printf("\n");
     ENABLE();
 }
 

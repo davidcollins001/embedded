@@ -32,7 +32,7 @@ cdef void c_callback_2(uint16_t arg):
 cdef class py_thread:
     cdef function_t _function
     cdef int _arg
-    cdef thread  _next
+    cdef thread _next
 
     ## call this after construction to set args
     cdef init(self, thread t):
@@ -79,7 +79,7 @@ def t_yield():
 cdef class py_mutex:
     cdef mutex_t _mutex
     cdef bint locked
-    cdef thread  _waitQ
+    cdef thread _waitQ
 
     def __cinit__(self):
         self._mutex.locked = 0
@@ -101,11 +101,12 @@ cdef class py_mutex:
         cdef thread t = self._waitQ
         ts = []
         if t:
-            print ">> ", t.arg
+            print ">>>> ", t.arg
+        # return get_queue_items(self)
+
         while not t_null(t):
             ts.append(py_thread().init(t))
             t = t.next
-        return ts
 
 
 cdef mutex_t *cmutext(py_mutex m):
@@ -120,16 +121,21 @@ def unlock(py_mutex):
     ctinythreads.unlock(cmutext(py_mutex))
 
 
-def get_queue_items(q):
+def get_queue_items(queue):
     """get threads from queue, either "freeQ" or "readyQ" """
-    if q == "freeQ":
-        queue = ctinythreads.freeQ
-    elif q == "readyQ":
-        queue = ctinythreads.readyQ
+    cdef thread q
+    if isinstance(queue, basestring):
+        if queue == "freeQ":
+            q = ctinythreads.freeQ
+        elif queue == "readyQ":
+            q = ctinythreads.readyQ
+    else:
+        # q = queue._waitQ
+        pass
 
     ## convert queue to list
     ts = []
-    cdef thread t = queue
+    cdef thread t = q
     while not t_null(t):
         ts.append(py_thread().init(t))
         t = t.next

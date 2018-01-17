@@ -18,6 +18,7 @@ def task(arg):
     global TASK_RUN_COUNT
     ## assume arg is task id
     TASK_RUN_COUNT["task_%d" % arg] += 1
+    print "task ", arg
 
 
 def task_1(arg):
@@ -66,19 +67,21 @@ class Test_tinythreads(unittest.TestCase):
             self.assertEqual(1, counts[i][1])
 
     def test_mutex(self):
-        print 1111
+
         spawn(task_1, 1)
         spawn(task_2, 2)
+        spawn(task_2, 3)
 
         global tt
         tt = True
 
-        print 'locking', py_tinythreads.current()
+        print 'locking', py_tinythreads.current().arg
         m = py_mutex()
         lock(m)
-        print 1, py_tinythreads.current()
+        print 1, py_tinythreads.current().arg
+        ## set current to next thread???
         lock(m)
-        print 2, py_tinythreads.current()
+        print 2, py_tinythreads.current().arg
         # lock(m)
         print "locked: ", m.locked
         print m.waitQ
@@ -87,6 +90,7 @@ class Test_tinythreads(unittest.TestCase):
         print "unlocked: ", m.locked
         unlock(m)
         print "unlocked: ", m.locked
+        print m.waitQ
 
 
 if __name__ == "__main__":
