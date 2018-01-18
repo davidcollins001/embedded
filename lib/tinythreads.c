@@ -48,8 +48,8 @@ static thread dequeue(thread *queue) {
 
 static void dispatch(thread next) {
     if (setjmp(current->context) == 0) {
+        printf("dispatch (%d)  %p -> %p\n", current->arg, current, next);
         current = next;
-        printf("hello (%d) \n", current->arg);
         longjmp(next->context, 1);
     }
 }
@@ -107,7 +107,7 @@ void lock(mutex_t *m) {
         // dispatch(dequeue(&readyQ));
         t = dequeue(&readyQ);
         printf(">> %d\n", t->arg);
-        // dispatch(t);
+        dispatch(t);
     } else {
         printf("1");
         m->locked = 1;

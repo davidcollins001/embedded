@@ -1,20 +1,20 @@
 
 ## must use gmake
 
-CC=avr-gcc
-OBJCOPY=avr-objcopy
-OBJDUMP=avr-objdump
-LIB_DIR = "../lib"
-CFLAGS=-g -Os -Wall -mmcu=atmega168 -I$(LIB_DIR)
-LINKFLAGS=-Wl,-u,vfprintf -lprintf_flt -Wl,-u,vfscanf -lscanf_flt -lm
-AVRDUDE=avrdude
-AVRDUDEFLAGS=-u -c avr109 -p m168 -b 115200 -P /dev/cuaU0
+CC := avr-gcc
+OBJCOPY := avr-objcopy
+OBJDUMP := avr-objdump
+LIB_DIR := "../lib"
+CFLAGS := -g -Os -Wall -mmcu = atmega168 -I$(LIB_DIR)
+LINKFLAGS := -Wl,-u,vfprintf -lprintf_flt -Wl,-u,vfscanf -lscanf_flt -lm
+AVRDUDE := avrdude
+AVRDUDEFLAGS := -u -c avr109 -p m168 -b 115200 -P /dev/cuaU0
 
-SOURCES=$(wildcard *.c)
-OBJECTS=$(SOURCES:.c=.o)
-# LIB_OBJECTS=$(wildcard $(LIB_DIR)/*.c)
-LIB_OBJECTS=$(wildcard ../lib/*.c)
-TESTS_DIR=tests
+SOURCES := $(wildcard *.c)
+OBJECTS := $(SOURCES:.c := .o)
+# LIB_OBJECTS := $(wildcard $(LIB_DIR)/*.c)
+LIB_OBJECTS := $(wildcard ../lib/*.c)
+TESTS_DIR := tests
 
 TARGET=flash
 

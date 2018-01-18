@@ -20,10 +20,16 @@ tests: $(TESTS) $(LIBS)
 		$(PYTHON) $$t; \
 	done
 
+ctests:
+	gcc -c -I ../ -I stubs/include/ test_tinythreads.c
+	gcc -o test test_tinythreads.o build/temp.win-amd64-2.7/tinythreads.obj
+	./test.exe
+
+
 $(LIBS): $(SOURCES) #clean
 	$(PYTHON) setup.py build_ext $(CYTHON_ARGS)
 
-.PHONY: clean libs
+.PHONY: clean libs ctests
 clean:
 	rm -rf build *.so *.c
 
