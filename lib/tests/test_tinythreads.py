@@ -32,7 +32,7 @@ def task_2(arg):
 class Test_tinythreads(unittest.TestCase):
 
     def setUp(self):
-        py_tinythreads.initialised = 0
+        py_tinythreads.initialised(0)
 
     def test_spawn_yield(self):
 
@@ -69,8 +69,8 @@ class Test_tinythreads(unittest.TestCase):
     def test_mutex(self):
 
         spawn(task_1, 1)
-        spawn(task_2, 2)
-        spawn(task_2, 3)
+        # spawn(task_2, 2)
+        # spawn(task_2, 3)
 
         global tt
         tt = True

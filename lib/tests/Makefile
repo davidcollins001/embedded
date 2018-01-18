@@ -20,10 +20,14 @@ tests: $(TESTS) $(LIBS)
 		$(PYTHON) $$t; \
 	done
 
-ctests:
+ctests: test_tinythreads.c
+ifeq ($(OS), Windows_NT)
 	gcc -c -I ../ -I stubs/include/ test_tinythreads.c
-	gcc -o test test_tinythreads.o build/temp.win-amd64-2.7/tinythreads.obj
-	./test.exe
+	gcc -o test_tinythreads test_tinythreads.o build/temp.win-amd64-2.7/tinythreads.obj
+else
+	gcc -DTEST -I ../ -I stubs/include/ ../tinythreads.c test_tinythreads.c -o test_tinythreads
+endif
+	./test_tinythreads
 
 
 $(LIBS): $(SOURCES) #clean

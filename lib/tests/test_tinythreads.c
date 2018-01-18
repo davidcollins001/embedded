@@ -11,6 +11,7 @@ void task1(uint16_t arg) {
         lock(&m);
         // yield to second thread to block on mutex
         yield();
+        printf("1- resumed\n");
         ii = 1;
     }
     printf("unlock\n");
@@ -67,6 +68,7 @@ int main(void) {
     while(1) {
         printf("* in main\n");
         yield();
+        printf("* completed yield\n");
     }
 
     return 0;

@@ -50,6 +50,7 @@ static void dispatch(thread next) {
     if (setjmp(current->context) == 0) {
         printf("dispatch (%d)  %p -> %p\n", current->arg, current, next);
         current = next;
+        printf("dipatching %p %d\n", next, *next->context);
         longjmp(next->context, 1);
     }
 }
@@ -69,6 +70,7 @@ void spawn(void (*function)(uint16_t), uint16_t arg) {
         printf("resume (%d)\n", current->arg);
         ENABLE();
         current->function(current->arg);
+        printf("=====unreachable\n");
         DISABLE();
         enqueue(current, &freeQ);
         dispatch(dequeue(&readyQ));
@@ -82,6 +84,7 @@ void spawn(void (*function)(uint16_t), uint16_t arg) {
 void yield(void) {
     enqueue(current, &readyQ);
     dispatch(dequeue(&readyQ));
+    printf("reentering %p\n", current);
 }
 
 #ifdef TEST

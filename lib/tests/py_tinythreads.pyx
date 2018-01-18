@@ -5,8 +5,11 @@ from libc.stdint cimport uint8_t, uint16_t
 # from ctinythreads cimport spawn, yield, lock, unlock
 
 
-def initialised():
-    ctinythreads.initialised = 0
+def initialised(value=None):
+    if value is not None:
+        ctinythreads.initialised = value
+    else:
+        return ctinythreads.initialised
 
 
 def current():
