@@ -30,6 +30,8 @@ struct thread_block {
     uint8_t stack[STACKSIZE];   // execution stack space
 };
 
+void display_q(thread *q);
+
 extern thread freeQ;
 extern thread readyQ;
 extern thread current;

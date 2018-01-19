@@ -12,6 +12,19 @@ thread current = &initp;
 //static
 uint8_t initialised = 0;
 
+
+void display_q(thread *q) {
+    int i = 0;
+    thread t = *q;
+    printf("==========vv==========\n");
+    // printf(" %d) %p %d %p\n", i, t, t->arg, &initp);
+    while(t) {
+        printf(" %d) %p %d %p\n", ++i, t, t->arg, t->next);
+        t = t->next;
+    }
+    printf("==========^^==========\n");
+}
+
 static void initialise(void) {
     int i;
     for (i=0; i<NTHREADS-1; i++)
@@ -22,20 +35,27 @@ static void initialise(void) {
 }
 
 static void enqueue(thread p, thread *queue) {
+    printf("queue %p\n", p);
+    display_q(queue);
     p->next = NULL;
     if (*queue == NULL) {
-        printf("queue\n");
         *queue = p;
     } else {
         thread q = *queue;
         while (q->next)
+        {
+            // printf("enqueue %p\n", q);
             q = q->next;
+        }
         q->next = p;
     }
+    display_q(queue);
 }
 
 static thread dequeue(thread *queue) {
+    printf("deque %p\n", *queue);
     thread p = *queue;
+    display_q(queue);
     if (*queue) {
         *queue = (*queue)->next;
     } else {
@@ -43,6 +63,8 @@ static thread dequeue(thread *queue) {
         while (1) ;  // not much else to do...
         // TODO: restart
     }
+    display_q(queue);
+    p->next = NULL;
     return p;
 }
 
@@ -54,6 +76,7 @@ static void dispatch(thread next) {
         longjmp(next->context, 1);
     }
 }
+
 
 void spawn(void (*function)(uint16_t), uint16_t arg) {
     thread newp;
@@ -67,10 +90,10 @@ void spawn(void (*function)(uint16_t), uint16_t arg) {
     newp->arg = arg;
     newp->next = NULL;
     if (setjmp(newp->context) == 1) {
-        printf("resume (%d)\n", current->arg);
+        // printf("resume (%d)\n", current->arg);
         ENABLE();
         current->function(current->arg);
-        printf("=====unreachable\n");
+        // printf("=====unreachable\n");
         DISABLE();
         enqueue(current, &freeQ);
         dispatch(dequeue(&readyQ));
@@ -82,9 +105,10 @@ void spawn(void (*function)(uint16_t), uint16_t arg) {
 }
 
 void yield(void) {
+    thread t = dequeue(&readyQ);
     enqueue(current, &readyQ);
-    dispatch(dequeue(&readyQ));
-    printf("reentering %p\n", current);
+    dispatch(t);
+    // printf("reentering %p\n", current);
 }
 
 #ifdef TEST
@@ -97,22 +121,22 @@ void t_yield(void) {
 void lock(mutex_t *m) {
     DISABLE();
     if(m->locked) {
-        printf("2");
+        // printf("add to mutex q\n");
         enqueue(current, &m->waitQ);
         // vvvvvv debugging vvvvvv
         thread t = m->waitQ;
         while(t) {
-            printf("123 t (%d)\n", t->arg);
-            printf("---%p\n", t->next);
+            // printf("123 t (%d) %p\n", t->arg, t);
+            // printf("---%p\n", t->next);
             t = t->next;
         }
         // ^^^^^^ debugging ^^^^^^
         // dispatch(dequeue(&readyQ));
         t = dequeue(&readyQ);
-        printf(">> %d\n", t->arg);
+        // printf(">> %d\n", t->arg);
         dispatch(t);
     } else {
-        printf("1");
+        // printf("locking\n");
         m->locked = 1;
     }
     ENABLE();
