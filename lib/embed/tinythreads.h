@@ -13,11 +13,31 @@
 #define STACKSIZE       80
 #define NTHREADS        4
 #ifndef TEST
-#define SETSTACK(buf, a) *((unsigned int*)(buf) + 8) = (unsigned int)a + STACKSIZE - 4; \
-                         *((unsigned int*)(buf) + 9) = (unsigned int)a + STACKSIZE - 4
+#define SETSTACK(buf, a) *((uint8_t*)(buf) + 8) = (uint8_t)a + STACKSIZE - 4; \
+                         *((uint8_t*)(buf) + 9) = (uint8_t)a + STACKSIZE - 4
 #else
-#define SETSTACK(buf, a)
+#define SETSTACK(buf, a) *((unsigned int*)(buf) + 1) = (uintptr_t)a + STACKSIZE - 8; \
+                         *((unsigned int*)(buf) + 2) = (uintptr_t)a + STACKSIZE - 8
 #endif
+
+#ifdef TEST
+#define SETJMP _setjmp
+#define LONGJMP _longjmp
+#else
+#define SETJMP setjmp
+#define LONGJMP longjmp
+#endif
+
+
+#define get_sp(p) \
+      asm volatile("movq %%rsp, %0" : "=r"(p))
+#define get_fp(p) \
+      asm volatile("movq %%rbp, %0" : "=r"(p))
+#define set_sp(p) \
+      asm volatile("movq %0, %%rsp" : : "r"(p))
+#define set_fp(p) \
+      asm volatile("movq %0, %%rbp" : : "r"(p))
+
 
 extern uint8_t initialised;
 
@@ -27,7 +47,11 @@ struct thread_block {
     uint16_t arg;                    // argument to the above
     thread next;                // for use in linked lists
     jmp_buf context;            // machine state
+#ifdef TEST
     uint8_t stack[STACKSIZE];   // execution stack space
+#else
+    unsigned int stack[STACKSIZE];   // execution stack space
+#endif
 };
 
 void display_q(thread *q);

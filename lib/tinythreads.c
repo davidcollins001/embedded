@@ -25,6 +25,8 @@ void display_q(thread *q) {
     printf("==========^^==========\n");
 }
 
+static void enqueue(thread p, thread *queue);
+
 static void initialise(void) {
     int i;
     for (i=0; i<NTHREADS-1; i++)
@@ -69,14 +71,14 @@ static thread dequeue(thread *queue) {
 }
 
 static void dispatch(thread next) {
-    if (setjmp(current->context) == 0) {
+    if (SETJMP(current->context) == 0) {
         printf("dispatch (%d)  %p -> %p\n", current->arg, current, next);
         current = next;
-        printf("dipatching %p %d\n", next, *next->context);
-        longjmp(next->context, 1);
+        printf("dipatching %p (%d)\n", next, next->arg);
+        LONGJMP(next->context, 1);
     }
+    printf("dispatched %p\n", current);
 }
-
 
 void spawn(void (*function)(uint16_t), uint16_t arg) {
     thread newp;
@@ -84,30 +86,46 @@ void spawn(void (*function)(uint16_t), uint16_t arg) {
     DISABLE();
     if (!initialised)
         initialise();
+    printf("*initp %p\n", &initp);
 
     newp = dequeue(&freeQ);
     newp->function = function;
     newp->arg = arg;
     newp->next = NULL;
-    if (setjmp(newp->context) == 1) {
+    current = newp;
+    // if (SETJMP(newp->context) == 1) {
+    if (SETJMP(initp.context) == 0) {
         // printf("resume (%d)\n", current->arg);
         ENABLE();
+
+        printf("__>> %p %p\n", &initp, &readyQ);
+
         current->function(current->arg);
         // printf("=====unreachable\n");
         DISABLE();
         enqueue(current, &freeQ);
         dispatch(dequeue(&readyQ));
     }
-    SETSTACK(&newp->context, &newp->stack);
+    printf("********************\n");
 
-    enqueue(newp, &readyQ);
+    // SETSTACK(&newp->context, &newp->stack);
+
+    // enqueue(newp, &readyQ);
     ENABLE();
 }
 
 void yield(void) {
-    thread t = dequeue(&readyQ);
+    // push init to front of queue
+    // initp.next = readyQ;
+    // readyQ = initp.next;
+    enqueue(&initp, &readyQ);
+
     enqueue(current, &readyQ);
+    thread t = dequeue(&readyQ);
     dispatch(t);
+        printf("111\n");
+    // printf("--- current %p\n", current);
+    printf("--- current \n");
     // printf("reentering %p\n", current);
 }
 
