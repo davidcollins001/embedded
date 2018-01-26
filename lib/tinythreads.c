@@ -74,11 +74,13 @@ static void dispatch(thread next) {
     if (SETJMP(current->context) == 0) {
         printf("dispatch (%d)  %p -> %p\n", current->arg, current, next);
         current = next;
-        printf("dipatching %p (%d)\n", next, next->arg);
+        printf("dispatching %p (%d) %p\n", next, next->arg, current);
         LONGJMP(next->context, 1);
     }
     printf("dispatched %p\n", current);
 }
+
+static unsigned int *tos;
 
 void spawn(void (*function)(uint16_t), uint16_t arg) {
     thread newp;
@@ -88,13 +90,23 @@ void spawn(void (*function)(uint16_t), uint16_t arg) {
         initialise();
     printf("*initp %p\n", &initp);
 
+    if(tos == NULL)
+        tos = (void*)&arg;
+    tos += STACKDIR STACKSIZE;
+
+    // initp.next = readyQ;
+    // readyQ = &initp;
+    // display_q(&readyQ);
+
     newp = dequeue(&freeQ);
     newp->function = function;
     newp->arg = arg;
     newp->next = NULL;
-    current = newp;
-    // if (SETJMP(newp->context) == 1) {
-    if (SETJMP(initp.context) == 0) {
+    newp->stack = tos;
+    // current = newp;
+    current = &initp;
+    if (SETJMP(newp->context) == 1) {
+    // if (SETJMP(initp.context) == 0) {
         // printf("resume (%d)\n", current->arg);
         ENABLE();
 
@@ -110,23 +122,16 @@ void spawn(void (*function)(uint16_t), uint16_t arg) {
 
     // SETSTACK(&newp->context, &newp->stack);
 
-    // enqueue(newp, &readyQ);
+    enqueue(newp, &readyQ);
     ENABLE();
 }
 
 void yield(void) {
-    // push init to front of queue
-    // initp.next = readyQ;
-    // readyQ = initp.next;
-    enqueue(&initp, &readyQ);
-
+    printf("yielding\n");
     enqueue(current, &readyQ);
     thread t = dequeue(&readyQ);
     dispatch(t);
-        printf("111\n");
-    // printf("--- current %p\n", current);
-    printf("--- current \n");
-    // printf("reentering %p\n", current);
+    printf("reentering %p\n", current);
 }
 
 #ifdef TEST

@@ -33,7 +33,7 @@ cdef extern from "embed/tinythreads.h":
     void lock(mutex_t *m)
     void unlock(mutex_t *m)
 
-    thread_block threads[4] #NTHREADS
+    thread_block threads[4]  # NTHREADS
     thread_block initp
 
     #define MUTEX_INIT {0,0}

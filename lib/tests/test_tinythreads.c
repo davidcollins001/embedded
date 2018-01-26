@@ -53,8 +53,8 @@ int run1(void) {
     thread t;
 
     spawn(task1, 1);
-    spawn(task2, 2);
-    spawn(task3, 3);
+    // spawn(task2, 2);
+    // spawn(task3, 3);
 
     t = readyQ;
 
@@ -63,18 +63,19 @@ int run1(void) {
         printf(" %d) %d\n", i+1, threads[i].arg);
 
     i = 0;
-    printf(" %d) %p %d %p\n", i, initp, initp.arg, initp.next);
+    printf(" %d) %p %d %p\n", i, &initp, initp.arg, initp.next);
     while(t) {
         printf(" %d) %p %d %p\n", ++i, t, t->arg, &threads[i]);
         t = t->next;
     }
 
-    // while(1) {
+    while(1) {
         printf("* in main\n");
+        fflush(stdout);
         yield();
         printf("* completed yield\n");
         printf("resumed: %p\n", current);
-    // }
+    }
 
         display_q(&readyQ);
         yield();

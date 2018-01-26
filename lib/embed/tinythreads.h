@@ -10,6 +10,7 @@
 
 #define DISABLE()       cli()
 #define ENABLE()        sei()
+#define STACKDIR        -
 #define STACKSIZE       80
 #define NTHREADS        4
 #ifndef TEST
@@ -20,7 +21,7 @@
                          *((unsigned int*)(buf) + 2) = (uintptr_t)a + STACKSIZE - 8
 #endif
 
-#ifdef TEST
+#ifdef __FreeBSD__
 #define SETJMP _setjmp
 #define LONGJMP _longjmp
 #else
@@ -47,11 +48,12 @@ struct thread_block {
     uint16_t arg;                    // argument to the above
     thread next;                // for use in linked lists
     jmp_buf context;            // machine state
-#ifdef TEST
-    uint8_t stack[STACKSIZE];   // execution stack space
-#else
-    unsigned int stack[STACKSIZE];   // execution stack space
-#endif
+// #ifdef TEST
+    // uint8_t stack[STACKSIZE];   // execution stack space
+// #else
+    // unsigned int stack[STACKSIZE];   // execution stack space
+// #endif
+    unsigned int* stack;
 };
 
 void display_q(thread *q);
