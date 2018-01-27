@@ -25,7 +25,6 @@ void display_q(thread *q) {
     printf("==========^^==========\n");
 }
 
-static void enqueue(thread p, thread *queue);
 
 static void initialise(void) {
     int i;
@@ -62,7 +61,8 @@ static thread dequeue(thread *queue) {
         *queue = (*queue)->next;
     } else {
         // Empty queue, kernel panic!!!
-        while (1) ;  // not much else to do...
+        while (1)
+            printf("spin\n");  // not much else to do...
         // TODO: restart
     }
     display_q(queue);
@@ -94,9 +94,9 @@ void spawn(void (*function)(uint16_t), uint16_t arg) {
         tos = (void*)&arg;
     tos += STACKDIR STACKSIZE;
 
-    // initp.next = readyQ;
-    // readyQ = &initp;
-    // display_q(&readyQ);
+    initp.next = readyQ;
+    readyQ = &initp;
+    display_q(&readyQ);
 
     newp = dequeue(&freeQ);
     newp->function = function;
@@ -104,9 +104,11 @@ void spawn(void (*function)(uint16_t), uint16_t arg) {
     newp->next = NULL;
     newp->stack = tos;
     // current = newp;
+
     current = &initp;
-    if (SETJMP(newp->context) == 1) {
-    // if (SETJMP(initp.context) == 0) {
+
+    // if (SETJMP(newp->context) == 1) {
+    if (SETJMP(initp.context) == 0) {
         // printf("resume (%d)\n", current->arg);
         ENABLE();
 

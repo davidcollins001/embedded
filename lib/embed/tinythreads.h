@@ -53,7 +53,7 @@ struct thread_block {
 // #else
     // unsigned int stack[STACKSIZE];   // execution stack space
 // #endif
-    unsigned int* stack;
+    char* stack;
 };
 
 void display_q(thread *q);
@@ -65,7 +65,7 @@ extern thread current;
 extern struct thread_block threads[NTHREADS];
 extern struct thread_block initp;
 
-void spawn(void (*function)(uint16_t), uint16_t arg);
+void *spawn(void (*function)(uint16_t), uint16_t arg);
 void yield(void);
 
 #ifdef TEST
