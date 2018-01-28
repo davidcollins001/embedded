@@ -6,9 +6,12 @@
 #include<tinythreads.h>
 
 #define STACKDIR - // set to + for upwards and - for downwards
-#define STACKSIZE (1<<12)
 
-// NOTE: this might not be needed with newer cython
+static int count = 0;
+
+static char *tos; // top of stack
+static void *coarg;
+
 struct thread_block threads[NTHREADS];
 struct thread_block initp;
 
@@ -18,9 +21,6 @@ thread current = &initp;
 
 //static
 uint8_t initialised = 0;
-
-static char *tos; // top of stack
-static void *coarg;
 
 
 void display_q(thread *q) {
@@ -35,7 +35,6 @@ void display_q(thread *q) {
     printf("==========^^==========\n");
 }
 
-
 static void initialise(void) {
     int i;
     for (i=0; i<NTHREADS-1; i++)
@@ -47,7 +46,7 @@ static void initialise(void) {
 
 static void enqueue(thread p, thread *queue) {
     printf("queue %p\n", p);
-    // display_q(queue);
+    display_q(queue);
     p->next = NULL;
     if (*queue == NULL) {
         *queue = p;
@@ -60,88 +59,104 @@ static void enqueue(thread p, thread *queue) {
         }
         q->next = p;
     }
-    // display_q(queue);
+    display_q(queue);
 }
 
 static thread dequeue(thread *queue) {
     printf("deque %p\n", *queue);
     thread p = *queue;
-    // display_q(queue);
+    display_q(queue);
     if (*queue) {
         *queue = (*queue)->next;
     } else {
         // Empty queue, kernel panic!!!
-        while (1)
-            printf("spin\n");  // not much else to do...
+        while (1) ;  // not much else to do...
         // TODO: restart
     }
-    // display_q(queue);
+    display_q(queue);
     p->next = NULL;
     return p;
 }
 
-void dispatch(thread next) {
-    if (setjmp(current->context) == 0) {
-        current = next;
-        longjmp(next->context, 1);
-    }
+void *dispatch(thread next) {
+    if (setjmp(current->context))
+        return 0;
+
+    current = next;
+    longjmp(next->context, 1);
 }
 
-void spawn(void (*function)(uint16_t), uint16_t arg) {
+
+void *spawn(void (*fun)(uint16_t), uint16_t arg) {
+
     DISABLE();
     if (!initialised)
         initialise();
+
     printf("*initp %p\n", &initp);
 
     if (tos == NULL)
         tos = (char*)&arg;
 
-    current = dequeue(&freeQ);
-
     tos += STACKDIR STACKSIZE;
     char stack[STACKDIR (tos - (char*)&arg)];
-    current->stack = stack; // ensure optimizer keeps stack
+    coarg = stack;  // ensure optimizer keeps n
 
-    if (setjmp(initp.context) == 0) {
-        ENABLE();
-        function(arg);
+    current = dequeue(&freeQ);
+    current->function = fun;
+    current->arg = arg;
+    current->next = NULL;
+    current->stack = tos;
 
-        DISABLE();
-        enqueue(current, &freeQ);
-        dispatch(dequeue(&readyQ));
-    }
+    count++;
+    // current = &thread[count++];
 
-    // enqueue(current, &readyQ);
-    //abort();
+    if (setjmp(initp.context))
+        return(coarg);
+
     ENABLE();
+    fun(arg);
+    //abort();
 }
+
 
 void sched(void) {
-    thread t = dequeue(&readyQ);
-    dispatch(t);
+    // schedule thread to run - needs to be run from main thread
+    static int n = 0;
+    n = n % (count - 1) + 1;
+    dispatch(&thread[n], (char*)-1);
+
+    enqueue(current, &readyQ);
+    dispatch(dequeue(&readyQ));
 }
 
+
 void yield(void) {
-    enqueue(current, &readyQ);
+    // switch to main thread to schedule another thread
     dispatch(&initp);
+    printf("top\n");
     // sched();
 }
 
 
-static void runner(uint16_t arg) {
+void test(uint16_t arg) {
     int j = 0;
 
     while(1) {
-        printf("coroutine %d at %p: %d\n", arg, (void*)&threads[arg], j++);
+        printf("coroutine %d at %p: %d\n", arg, current->arg, j++);
         yield();
     }
 }
 
+
 int main(void) {
     uint16_t i = 0;
     for(i=0; i<3; i++) {
-        printf("spawning %d\n", i);
-        spawn(runner, i);
+        printf("spawning %d\n", count);
+        fflush(stdout);
+        spawn(test, i);
+        printf("done\n");
+        i++;
     }
 
     printf("\nschedule:\n");
