@@ -24,6 +24,10 @@ ctests: test_tinythreads.c ../tinythreads.c
 	gcc -g -DTEST -I ../ -I stubs/include/ ../tinythreads.c test_tinythreads.c -o test_tinythreads
 	./test_tinythreads
 
+ctests2: ../tinythreads2.c
+	gcc -g -DTEST -I ../ -I stubs/include/ ../tinythreads2.c -o tinythreads2
+	./tinythreads2
+
 
 $(LIBS): $(SOURCES) #clean
 	$(PYTHON) setup.py build_ext $(CYTHON_ARGS)

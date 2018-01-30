@@ -10,16 +10,17 @@
 
 #define DISABLE()       cli()
 #define ENABLE()        sei()
-#define STACKDIR        -
-#define STACKSIZE       80
 #define NTHREADS        4
+// set to + for upwards and - for downwards
+#define STACKDIR -
 #ifndef TEST
+#define STACKSIZE       80
+#else
+#define STACKSIZE (1<<12)
+#endif
+
 #define SETSTACK(buf, a) *((uint8_t*)(buf) + 8) = (uint8_t)a + STACKSIZE - 4; \
                          *((uint8_t*)(buf) + 9) = (uint8_t)a + STACKSIZE - 4
-#else
-#define SETSTACK(buf, a) *((unsigned int*)(buf) + 1) = (uintptr_t)a + STACKSIZE - 8; \
-                         *((unsigned int*)(buf) + 2) = (uintptr_t)a + STACKSIZE - 8
-#endif
 
 #ifdef __FreeBSD__
 #define SETJMP _setjmp
@@ -44,16 +45,11 @@ extern uint8_t initialised;
 
 typedef struct thread_block *thread;
 struct thread_block {
-    void (*function)(uint16_t);      // code to run
-    uint16_t arg;                    // argument to the above
+    void (*function)(uint16_t); // code to run
+    uint16_t arg;               // argument to the above
     thread next;                // for use in linked lists
     jmp_buf context;            // machine state
-// #ifdef TEST
-    // uint8_t stack[STACKSIZE];   // execution stack space
-// #else
-    // unsigned int stack[STACKSIZE];   // execution stack space
-// #endif
-    char* stack;
+    uint8_t *stack;             // execution stack space
 };
 
 void display_q(thread *q);
@@ -63,7 +59,7 @@ extern thread readyQ;
 extern thread current;
 
 extern struct thread_block threads[NTHREADS];
-extern struct thread_block initp;
+extern struct thread_block scheduler;
 
 void spawn(void (*function)(uint16_t), uint16_t arg);
 void yield(void);
