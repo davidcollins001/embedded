@@ -140,6 +140,7 @@ void yield(void) {
 
 
 void lock(mutex_t *m) {
+    printf("locking\n");
     DISABLE();
     if(m->locked) {
         // printf("add to mutex q\n");
@@ -159,18 +160,18 @@ void lock(mutex_t *m) {
         // yield();
         dispatch(dequeue(&readyQ));
     } else {
-        printf("locking\n");
         m->locked = 1;
     }
     ENABLE();
 }
 
 void unlock(mutex_t *m) {
+    printf("unlocking\n");
     DISABLE();
     if(m->waitQ) {
+        enqueue(current, &readyQ);
         dispatch(dequeue(&m->waitQ));
     } else  {
-        printf("unlocking\n");
         m->locked = 0;
     }
     ENABLE();
@@ -182,8 +183,8 @@ mutex_t m;
 static void runner1(uint16_t arg) {
     lock(&m);
     printf("coroutine %d at %p: %d\n", arg, (void*)&threads[arg-1], j++);
-    unlock(&m);
     yield();
+    unlock(&m);
 
      while(1) {
         printf("coroutine %d at %p: %d\n", arg, (void*)&threads[arg-1], j++);
