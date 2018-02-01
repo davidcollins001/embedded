@@ -57,6 +57,7 @@ void display_q(thread *q);
 extern thread freeQ;
 extern thread readyQ;
 extern thread current;
+extern struct thread_block mainp;
 
 extern struct thread_block threads[NTHREADS];
 extern struct thread_block scheduler;

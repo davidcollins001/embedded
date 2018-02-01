@@ -58,12 +58,12 @@ int run1(void) {
 
     t = readyQ;
 
-    printf(" 0) %d\n", initp.arg);
+    printf(" 0) %d\n", mainp.arg);
     for(i=0; i<4; i++)
         printf(" %d) %d\n", i+1, threads[i].arg);
 
     i = 0;
-    printf(" %d) %p %d %p\n", i, &initp, initp.arg, initp.next);
+    printf(" %d) %p %d %p\n", i, &mainp, mainp.arg, mainp.next);
     while(t) {
         printf(" %d) %p %d %p\n", ++i, t, t->arg, &threads[i]);
         t = t->next;
@@ -99,13 +99,67 @@ int run2(void) {
 }
 
 
+int j = 0;
+mutex_t m;
+static void runner1(uint16_t arg) {
+    lock(&m);
+    printf("coroutine %d at %p: %d\n", arg, (void*)&threads[arg-1], j++);
+    yield();
+    unlock(&m);
+
+     while(1) {
+        printf("coroutine %d at %p: %d\n", arg, (void*)&threads[arg-1], j++);
+        yield();
+    }
+}
+
+static void runner2(uint16_t arg) {
+    printf("enter2\n");
+    lock(&m);
+    printf("coroutine %d at %p: %d\n", arg, (void*)&threads[arg-1], j++);
+    unlock(&m);
+    yield();
+
+    while(1) {
+        printf("coroutine %d at %p: %d\n", arg, (void*)&threads[arg-1], j++);
+        yield();
+    }
+}
+
+static void runner3(uint16_t arg) {
+    while(1) {
+        printf("coroutine %d at %p: %d\n", arg, (void*)&threads[arg-1], j++);
+        yield();
+    }
+}
+
+int run3(void) {
+    printf("spawning %d\n", 1);
+    spawn(runner1, 1);
+    printf("spawning %d\n", 2);
+    spawn(runner2, 2);
+    printf("spawning %d\n", 3);
+    spawn(runner3, 3);
+
+    printf("\nschedule:\n");
+
+    while(1) {
+        printf("*main\n");
+        yield();
+    }
+
+    return 0;
+}
+
+
 int main(void) {
 
     printf("---> sp = %p %p\n", 1, 2);
     // printf("---> sp = %p %p\n", current->context[8], current->context->_jb[0]);
 
-    run1();
+    // run1();
     // run2();
+    run3();
 
     return 0;
 }

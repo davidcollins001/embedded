@@ -1,23 +1,30 @@
 
 #include <embed/tinythreads.h>
 
+#ifdef TEST
+#include<stdio.h>
+#endif
+
 // NOTE: this might not be needed with newer cython
 struct thread_block threads[NTHREADS];
-struct thread_block initp;
+struct thread_block mainp;
 
 thread freeQ   = threads;
 thread readyQ  = NULL;
-thread current = &initp;
+thread current = &mainp;
 
 //static
 uint8_t initialised = 0;
+
+static uint8_t *tos; // top of stack
+static void *coarg;
 
 
 void display_q(thread *q) {
     int i = 0;
     thread t = *q;
     printf("==========vv==========\n");
-    // printf(" %d) %p %d %p\n", i, t, t->arg, &initp);
+    // printf(" %d) %p %d %p\n", i, t, t->arg, &mainp);
     while(t) {
         printf(" %d) %p %d %p\n", ++i, t, t->arg, t->next);
         t = t->next;
@@ -32,12 +39,13 @@ static void initialise(void) {
         threads[i].next = &threads[i+1];
     threads[NTHREADS-1].next = NULL;
 
+    mainp.next = NULL;
+
     initialised = 1;
 }
 
 static void enqueue(thread p, thread *queue) {
-    printf("queue %p\n", p);
-    display_q(queue);
+    // display_q(queue);
     p->next = NULL;
     if (*queue == NULL) {
         *queue = p;
@@ -45,18 +53,16 @@ static void enqueue(thread p, thread *queue) {
         thread q = *queue;
         while (q->next)
         {
-            // printf("enqueue %p\n", q);
             q = q->next;
         }
         q->next = p;
     }
-    display_q(queue);
+    // display_q(queue);
 }
 
 static thread dequeue(thread *queue) {
-    printf("deque %p\n", *queue);
     thread p = *queue;
-    display_q(queue);
+    // display_q(queue);
     if (*queue) {
         *queue = (*queue)->next;
     } else {
@@ -65,75 +71,53 @@ static thread dequeue(thread *queue) {
             printf("spin\n");  // not much else to do...
         // TODO: restart
     }
-    display_q(queue);
+    // display_q(queue);
     p->next = NULL;
     return p;
 }
 
 static void dispatch(thread next) {
     if (SETJMP(current->context) == 0) {
-        printf("dispatch (%d)  %p -> %p\n", current->arg, current, next);
         current = next;
-        printf("dispatching %p (%d) %p\n", next, next->arg, current);
         LONGJMP(next->context, 1);
     }
-    printf("dispatched %p\n", current);
 }
 
-static unsigned int *tos;
-
 void spawn(void (*function)(uint16_t), uint16_t arg) {
-    thread newp;
-
     DISABLE();
     if (!initialised)
         initialise();
-    printf("*initp %p\n", &initp);
 
-    if(tos == NULL)
-        tos = (void*)&arg;
+    if (tos == NULL)
+        tos = (uint8_t*)&arg;
+
+    current = dequeue(&freeQ);
+
     tos += STACKDIR STACKSIZE;
+    uint8_t stack[STACKDIR (tos - (uint8_t*)&arg)];
+    current->stack = stack; // ensure optimizer keeps stack
+    current->function = function;
+    current->arg = arg;
 
-    initp.next = readyQ;
-    readyQ = &initp;
-    display_q(&readyQ);
-
-    newp = dequeue(&freeQ);
-    newp->function = function;
-    newp->arg = arg;
-    newp->next = NULL;
-    newp->stack = tos;
-    // current = newp;
-
-    current = &initp;
-
-    // if (SETJMP(newp->context) == 1) {
-    if (SETJMP(initp.context) == 0) {
-        // printf("resume (%d)\n", current->arg);
+    if (SETJMP(current->context) == 1) {
         ENABLE();
-
-        printf("__>> %p %p\n", &initp, &readyQ);
-
         current->function(current->arg);
-        // printf("=====unreachable\n");
+
         DISABLE();
         enqueue(current, &freeQ);
         dispatch(dequeue(&readyQ));
     }
-    printf("********************\n");
 
-    // SETSTACK(&newp->context, &newp->stack);
+    enqueue(current, &readyQ);
+    current = &mainp;
 
-    enqueue(newp, &readyQ);
+    //abort();
     ENABLE();
 }
 
 void yield(void) {
-    printf("yielding\n");
     enqueue(current, &readyQ);
-    thread t = dequeue(&readyQ);
-    dispatch(t);
-    printf("reentering %p\n", current);
+    dispatch(dequeue(&readyQ));
 }
 
 #ifdef TEST
@@ -146,22 +130,9 @@ void t_yield(void) {
 void lock(mutex_t *m) {
     DISABLE();
     if(m->locked) {
-        // printf("add to mutex q\n");
         enqueue(current, &m->waitQ);
-        // vvvvvv debugging vvvvvv
-        thread t = m->waitQ;
-        while(t) {
-            // printf("123 t (%d) %p\n", t->arg, t);
-            // printf("---%p\n", t->next);
-            t = t->next;
-        }
-        // ^^^^^^ debugging ^^^^^^
-        // dispatch(dequeue(&readyQ));
-        t = dequeue(&readyQ);
-        // printf(">> %d\n", t->arg);
-        dispatch(t);
+        dispatch(dequeue(&readyQ));
     } else {
-        // printf("locking\n");
         m->locked = 1;
     }
     ENABLE();
@@ -170,6 +141,7 @@ void lock(mutex_t *m) {
 void unlock(mutex_t *m) {
     DISABLE();
     if(m->waitQ) {
+        enqueue(current, &readyQ);
         dispatch(dequeue(&m->waitQ));
     } else  {
         m->locked = 0;
