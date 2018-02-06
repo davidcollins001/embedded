@@ -20,9 +20,9 @@ tests: $(TESTS) $(LIBS)
 		$(PYTHON) $$t; \
 	done
 
-ctests: test_tinythreads.c ../tinythreads.c
-	gcc -g -DTEST -I ../ -I stubs/include/ ../tinythreads.c test_tinythreads.c -o test_tinythreads
-	./test_tinythreads.exe
+ctests: run_tinythreads.c ../tinythreads.c
+	gcc -g -DTEST -I ../ -I stubs/include/ ../tinythreads.c run_tinythreads.c -o run_tinythreads.exe
+	./run_tinythreads.exe
 
 
 $(LIBS): $(SOURCES) #clean
@@ -30,5 +30,5 @@ $(LIBS): $(SOURCES) #clean
 
 .PHONY: clean libs ctests
 clean:
-	rm -rf build *.so *.c
+	rm -rf build *.so *.c run_tinythreads.exe
 
