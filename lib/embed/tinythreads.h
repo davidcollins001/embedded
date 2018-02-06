@@ -2,6 +2,10 @@
 #ifndef _TINYTHREADS_H
 #define _TINYTHREADS_H
 
+#ifdef _WIN32
+#include <stdlib.h>
+#endif
+
 #include <setjmp.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -40,8 +44,6 @@
 #define set_fp(p) \
       asm volatile("movq %0, %%rbp" : : "r"(p))
 
-
-extern uint8_t initialised;
 
 typedef struct thread_block *thread;
 struct thread_block {

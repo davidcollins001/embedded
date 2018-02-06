@@ -5,13 +5,6 @@ from libc.stdint cimport uint8_t, uint16_t
 # from ctinythreads cimport spawn, yield, lock, unlock
 
 
-def initialised(value=None):
-    if value is not None:
-        ctinythreads.initialised = value
-    else:
-        return ctinythreads.initialised
-
-
 def current():
     return py_thread().init(ctinythreads.current)
 
@@ -144,6 +137,7 @@ def get_queue_items(queue):
         t = t.next
 
     return ts
+
 
 cdef bint t_null(thread t):
     return t == NULL

@@ -9,3 +9,4 @@ build
 py*.c
 *.so
 *.pyd
+*.exe

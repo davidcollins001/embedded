@@ -13,10 +13,10 @@ thread freeQ   = threads;
 thread readyQ  = NULL;
 thread current = &mainp;
 
-//static
-uint8_t initialised = 0;
+static uint8_t initialised = 0;
 
-static uint8_t *tos; // top of stack
+// top of stack
+static uint8_t *tos;
 static void *coarg;
 
 
@@ -91,8 +91,13 @@ void spawn(void (*function)(uint16_t), uint16_t arg) {
     current = dequeue(&freeQ);
 
     tos += STACKDIR STACKSIZE;
+#ifdef _WIN32
+    uint8_t stack = malloc(tos - (uint8_t*)&arg);
+#else
     uint8_t stack[STACKDIR (tos - (uint8_t*)&arg)];
-    current->stack = stack; // ensure optimizer keeps stack
+#endif
+    // ensure optimizer keeps stack
+    current->stack = stack;
     current->function = function;
     current->arg = arg;
 

@@ -1,5 +1,4 @@
 
-
 import unittest
 from mock import patch
 import py_tinythreads
@@ -11,7 +10,6 @@ from collections import defaultdict
 
 TASK_RUN_COUNT = defaultdict(int)
 
-tt = False
 
 ## for more than 2 callbacks add a cdef c_callback_n to py_rtos.pyx
 def task(arg):
@@ -32,7 +30,8 @@ def task_2(arg):
 class Test_tinythreads(unittest.TestCase):
 
     def setUp(self):
-        py_tinythreads.initialised(0)
+        # py_tinythreads.initialised(0)
+        pass
 
     def test_spawn_yield(self):
 
@@ -72,9 +71,6 @@ class Test_tinythreads(unittest.TestCase):
         # spawn(task_2, 2)
         # spawn(task_2, 3)
 
-        global tt
-        tt = True
-
         print 'locking', py_tinythreads.current().arg
         m = py_mutex()
         lock(m)
@@ -95,4 +91,3 @@ class Test_tinythreads(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
