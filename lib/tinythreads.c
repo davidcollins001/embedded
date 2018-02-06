@@ -45,7 +45,6 @@ static void initialise(void) {
 }
 
 static void enqueue(thread p, thread *queue) {
-    // display_q(queue);
     p->next = NULL;
     if (*queue == NULL) {
         *queue = p;
@@ -57,12 +56,10 @@ static void enqueue(thread p, thread *queue) {
         }
         q->next = p;
     }
-    // display_q(queue);
 }
 
 static thread dequeue(thread *queue) {
     thread p = *queue;
-    // display_q(queue);
     if (*queue) {
         *queue = (*queue)->next;
     } else {
@@ -71,7 +68,6 @@ static thread dequeue(thread *queue) {
             printf("spin\n");  // not much else to do...
         // TODO: restart
     }
-    // display_q(queue);
     p->next = NULL;
     return p;
 }
@@ -88,6 +84,7 @@ void spawn(void (*function)(uint16_t), uint16_t arg) {
     if (!initialised)
         initialise();
 
+    // put this here to find current top of stack
     if (tos == NULL)
         tos = (uint8_t*)&arg;
 

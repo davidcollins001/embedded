@@ -5,31 +5,37 @@
 mutex_t m;
 
 void task1(uint16_t arg) {
+    uint8_t rc = 3;
 
-    while(1) {
+    while(rc--) {
         printf("running task1 %p %d\n", current, arg);
-        // lock(&m);
+        lock(&m);
         // yield to second thread to block on mutex
         yield();
         printf("resumed: %p\n", current);
         printf("unlock\n");
-        // unlock(&m);
+        unlock(&m);
     }
 }
 
 void task2(uint16_t arg) {
-    while(1) {
+    uint8_t rc = 3;
+
+    while(rc--) {
         printf("running task2 %p %d\n", current, arg);
-        // lock(&m);
+        lock(&m);
         // should be blocked waiting for mutex
         printf("shouldn't get here\n");
+        unlock(&m);
         yield();
         printf("resumed: %p\n", current);
     }
 }
 
 void task3(uint16_t arg) {
-    while(1) {
+    uint8_t rc = 3;
+
+    while(rc--) {
         printf("running task3 %p %d\n", current, arg);
         uint8_t count = 0;
 
@@ -53,8 +59,8 @@ int run1(void) {
     thread t;
 
     spawn(task1, 1);
-    // spawn(task2, 2);
-    // spawn(task3, 3);
+    spawn(task2, 2);
+    spawn(task3, 3);
 
     t = readyQ;
 
@@ -69,7 +75,7 @@ int run1(void) {
         t = t->next;
     }
 
-    while(1) {
+    while(readyQ) {
         printf("* in main\n");
         fflush(stdout);
         yield();
@@ -77,14 +83,13 @@ int run1(void) {
         printf("resumed: %p\n", current);
     }
 
-        display_q(&readyQ);
-        yield();
-
     return 0;
 }
 
 void runner(uint16_t arg) {
-    while(1) {
+    uint8_t rc = 4;
+
+    while(rc--) {
         printf("in runner: %d\n", arg);
         display_q(&readyQ);
         yield();
@@ -96,44 +101,58 @@ int run2(void) {
     spawn(runner, 2);
 
     display_q(&readyQ);
+
+    while(readyQ) {
+        yield();
+    }
+
+    display_q(&readyQ);
+    display_q(&freeQ);
 }
 
 
-int j = 0;
-mutex_t m;
+uint8_t j = 0;
 static void runner1(uint16_t arg) {
+    uint8_t rc = 3;
+
     lock(&m);
     printf("coroutine %d at %p: %d\n", arg, (void*)&threads[arg-1], j++);
     yield();
     unlock(&m);
 
-     while(1) {
+     while(rc--) {
         printf("coroutine %d at %p: %d\n", arg, (void*)&threads[arg-1], j++);
         yield();
     }
 }
 
 static void runner2(uint16_t arg) {
+    uint8_t rc = 3;
+
     printf("enter2\n");
     lock(&m);
     printf("coroutine %d at %p: %d\n", arg, (void*)&threads[arg-1], j++);
     unlock(&m);
     yield();
 
-    while(1) {
+    while(rc--) {
         printf("coroutine %d at %p: %d\n", arg, (void*)&threads[arg-1], j++);
         yield();
     }
 }
 
 static void runner3(uint16_t arg) {
-    while(1) {
+    uint8_t rc = 3;
+
+    while(rc--) {
         printf("coroutine %d at %p: %d\n", arg, (void*)&threads[arg-1], j++);
         yield();
     }
 }
 
 int run3(void) {
+    uint8_t rc = 3;
+
     printf("spawning %d\n", 1);
     spawn(runner1, 1);
     printf("spawning %d\n", 2);
@@ -143,7 +162,7 @@ int run3(void) {
 
     printf("\nschedule:\n");
 
-    while(1) {
+    while(readyQ) {
         printf("*main\n");
         yield();
     }
@@ -153,13 +172,21 @@ int run3(void) {
 
 
 int main(void) {
+    /* run 3 test cases sequentially */
 
-    printf("---> sp = %p %p\n", 1, 2);
-    // printf("---> sp = %p %p\n", current->context[8], current->context->_jb[0]);
+    printf("RUNNING 1\n");
+    run1();
 
-    // run1();
-    // run2();
+    printf("RUNNING 2\n");
+    run2();
+
+    printf("RUNNING 3\n");
     run3();
+
+    printf("freeQ:\n");
+    display_q(&readyQ);
+    printf("readyQ:\n");
+    display_q(&readyQ);
 
     return 0;
 }
