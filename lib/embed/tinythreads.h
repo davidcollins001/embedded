@@ -15,16 +15,14 @@
 #define DISABLE()       cli()
 #define ENABLE()        sei()
 #define NTHREADS        4
+//
 // set to + for upwards and - for downwards
 #define STACKDIR -
 #ifndef TEST
-#define STACKSIZE       80
+    #define STACKSIZE       80
 #else
-#define STACKSIZE (1<<12)
+    #define STACKSIZE (1<<12)
 #endif
-
-#define SETSTACK(buf, a) *((uint8_t*)(buf) + 8) = (uint8_t)a + STACKSIZE - 4; \
-                         *((uint8_t*)(buf) + 9) = (uint8_t)a + STACKSIZE - 4
 
 #ifdef __FreeBSD__
 #define SETJMP _setjmp
@@ -33,16 +31,6 @@
 #define SETJMP setjmp
 #define LONGJMP longjmp
 #endif
-
-
-#define get_sp(p) \
-      asm volatile("movq %%rsp, %0" : "=r"(p))
-#define get_fp(p) \
-      asm volatile("movq %%rbp, %0" : "=r"(p))
-#define set_sp(p) \
-      asm volatile("movq %0, %%rsp" : : "r"(p))
-#define set_fp(p) \
-      asm volatile("movq %0, %%rbp" : : "r"(p))
 
 
 typedef struct thread_block *thread;
